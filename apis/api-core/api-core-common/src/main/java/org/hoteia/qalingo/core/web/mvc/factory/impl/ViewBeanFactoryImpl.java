@@ -444,6 +444,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         retailerViewBean.setOfficialRetailer(retailer.isOfficialRetailer());
         retailerViewBean.setBrand(retailer.isBrand());
         retailerViewBean.setEcommerce(retailer.isEcommerce());
+        retailerViewBean.setCorner(retailer.isCorner());
 
         if (Hibernate.isInitialized(retailer.getAddresses()) 
                 && retailer.getAddresses() != null) {
@@ -908,7 +909,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
 
         final StoreViewBean storeViewBean = new StoreViewBean();
         storeViewBean.setCode(store.getCode());
-        storeViewBean.setBusinessName(store.getBusinessName());
+        storeViewBean.setName(store.getName());
         storeViewBean.setAddress1(store.getAddress1());
         storeViewBean.setAddress2(store.getAddress2());
         storeViewBean.setAddressAdditionalInformation(store.getAddressAdditionalInformation());
@@ -1374,7 +1375,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         final ProductMarketingViewBean productMarketingViewBean = new ProductMarketingViewBean();
 
         productMarketingViewBean.setCode(productMarketing.getCode());
-        productMarketingViewBean.setBusinessName(productMarketing.getBusinessName());
+        productMarketingViewBean.setName(productMarketing.getName());
         productMarketingViewBean.setI18nName(productMarketing.getI18nName(localizationCode));
         productMarketingViewBean.setDescription(productMarketing.getDescription());
 
@@ -1478,7 +1479,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         final ProductSkuViewBean productSkuViewBean = new ProductSkuViewBean();
 
         productSkuViewBean.setCode(productSku.getCode());
-        productSkuViewBean.setBusinessName(productSku.getBusinessName());
+        productSkuViewBean.setName(productSku.getName());
         productSkuViewBean.setI18nName(productSku.getI18nName(localizationCode));
         productSkuViewBean.setDescription(productSku.getDescription());
         productSkuViewBean.setDefault(productSku.isDefault());
