@@ -406,7 +406,10 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
 		productService.saveOrUpdateProductMarketingAsset(asset);
 	}
 	
-	public void createOrUpdateRetailer(final Retailer retailer, final RetailerForm retailerForm) {
+	public void createOrUpdateRetailer(Retailer retailer, final RetailerForm retailerForm) {
+	    if (retailer == null) {
+	        retailer = new Retailer();
+	    }
 		retailer.setCode(retailerForm.getCode());
 		retailer.setName(retailerForm.getName());
 		retailer.setDescription(retailerForm.getDescription());
@@ -436,11 +439,13 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
 		retailer.setEcommerce(retailerForm.isEcommerce());
 		retailer.setOfficialRetailer(retailerForm.isOfficialRetailer());
 		
-		if(retailerForm.getWarehouseId() != null){
+		if(StringUtils.isNotBlank(retailerForm.getWarehouseId())){
 			final Warehouse warehouse = warehouseService.getWarehouseById(retailerForm.getWarehouseId());
 			if(warehouse != null){
 				retailer.setWarehouse(warehouse);
 			}
+		}else{
+			retailer.setWarehouse(null);
 		}
 		
 		retailerService.saveOrUpdateRetailer(retailer);

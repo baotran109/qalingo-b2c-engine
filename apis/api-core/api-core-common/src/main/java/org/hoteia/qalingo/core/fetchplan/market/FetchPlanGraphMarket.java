@@ -96,11 +96,13 @@ public class FetchPlanGraphMarket {
         fetchplans.add(new SpecificFetchMode("defaultRetailer"));
         fetchplans.add(new SpecificFetchMode("retailers"));
 
+        fetchplans.add(new SpecificFetchMode("warehouses"));
+
         fetchplans.add(new SpecificFetchMode("deliveryMethods", new SpecificAlias("warehouses.deliveryMethods")));
 
-        fetchplans.add(new SpecificFetchMode("deliveryMethodCountries", new SpecificAlias("deliveryMethods.countries")));
+        fetchplans.add(new SpecificFetchMode("deliveryMethodCountries", new SpecificAlias("warehouses.deliveryMethods.countries")));
 
-        fetchplans.add(new SpecificFetchMode("deliveryMethodPrices", new SpecificAlias("deliveryMethods.prices")));
+        fetchplans.add(new SpecificFetchMode("deliveryMethodPrices", new SpecificAlias("warehouses.deliveryMethods.prices")));
 
         fetchplans.add(new SpecificFetchMode("paymentGateways"));
         
