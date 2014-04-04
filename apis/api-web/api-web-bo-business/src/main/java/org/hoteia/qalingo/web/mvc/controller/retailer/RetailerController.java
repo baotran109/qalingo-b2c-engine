@@ -30,7 +30,6 @@ import org.hoteia.qalingo.core.domain.Retailer;
 import org.hoteia.qalingo.core.domain.Warehouse;
 import org.hoteia.qalingo.core.domain.enumtype.BoUrls;
 import org.hoteia.qalingo.core.fetchplan.common.FetchPlanGraphCommon;
-import org.hoteia.qalingo.core.i18n.BoMessageKey;
 import org.hoteia.qalingo.core.i18n.enumtype.ScopeWebMessage;
 import org.hoteia.qalingo.core.pojo.RequestData;
 import org.hoteia.qalingo.core.service.RetailerService;
@@ -75,10 +74,6 @@ public class RetailerController extends AbstractBusinessBackofficeController {
 		ModelAndViewThemeDevice modelAndView = new ModelAndViewThemeDevice(getCurrentVelocityPath(request), BoUrls.RETAILER_LIST.getVelocityPage());
         final RequestData requestData = requestUtil.getRequestData(request);
         final MarketArea marketArea = requestData.getMarketArea();
-        final Locale locale = requestData.getLocale();
-        
-		final String contentText = getSpecificMessage(ScopeWebMessage.RETAILER, BoMessageKey.MAIN_CONTENT_TEXT, locale);
-		modelAndView.addObject(ModelConstants.CONTENT_TEXT, contentText);
 		
 		displayList(request, model, requestData, null);
 
@@ -205,7 +200,7 @@ public class RetailerController extends AbstractBusinessBackofficeController {
             }
             
         } catch (Exception e) {
-            addMessageError(result, null, "login", "login", getSpecificMessage(ScopeWebMessage.RETAILER, "create_or_update_message", locale));
+            addMessageError(result, null, "code", "code", getSpecificMessage(ScopeWebMessage.RETAILER, "create_or_update_message", locale));
             logger.error("Can't save or update Retailer:" + retailerForm.getId() + "/" + retailerForm.getCode(), e);
             return retailerEdit(request, model, retailerForm);
         }
@@ -218,49 +213,49 @@ public class RetailerController extends AbstractBusinessBackofficeController {
 		String url = request.getRequestURI();
 		String page = request.getParameter(Constants.PAGINATION_PAGE_PARAMETER);
 		
-		PagedListHolder<RetailerViewBean> RetailerViewBeanPagedListHolder = new PagedListHolder<RetailerViewBean>();
+		PagedListHolder<RetailerViewBean> retailerViewBeanPagedListHolder = new PagedListHolder<RetailerViewBean>();
 
        	if(retailers == null){
     		retailers = retailerService.findRetailers(marketArea.getId(), retailer.getId());
     	}
        	
         if(StringUtils.isEmpty(page)){
-        	RetailerViewBeanPagedListHolder = initList(request, SESSION_KEY, requestData, retailers);
+        	retailerViewBeanPagedListHolder = initList(request, SESSION_KEY, requestData, retailers);
     		
         } else {
-        	RetailerViewBeanPagedListHolder = (PagedListHolder) request.getSession().getAttribute(SESSION_KEY); 
-	        if (RetailerViewBeanPagedListHolder == null) { 
-	        	RetailerViewBeanPagedListHolder = initList(request, SESSION_KEY, requestData, retailers);
+        	retailerViewBeanPagedListHolder = (PagedListHolder) request.getSession().getAttribute(SESSION_KEY); 
+	        if (retailerViewBeanPagedListHolder == null) { 
+	        	retailerViewBeanPagedListHolder = initList(request, SESSION_KEY, requestData, retailers);
 	        }
 	        int pageTarget = new Integer(page).intValue() - 1;
-	        int pageCurrent = RetailerViewBeanPagedListHolder.getPage();
+	        int pageCurrent = retailerViewBeanPagedListHolder.getPage();
 	        if (pageCurrent < pageTarget) { 
 	        	for (int i = pageCurrent; i < pageTarget; i++) {
-	        		RetailerViewBeanPagedListHolder.nextPage(); 
+	        		retailerViewBeanPagedListHolder.nextPage(); 
 				}
 	        } else if (pageCurrent > pageTarget) { 
 	        	for (int i = pageTarget; i < pageCurrent; i++) {
-	        		RetailerViewBeanPagedListHolder.previousPage(); 
+	        		retailerViewBeanPagedListHolder.previousPage(); 
 				}
 	        } 
         }
         model.addAttribute(Constants.PAGINATION_PAGE_URL, url);
-        model.addAttribute(Constants.PAGINATION_PAGE_PAGED_LIST_HOLDER, RetailerViewBeanPagedListHolder);
+        model.addAttribute(Constants.PAGINATION_PAGE_PAGED_LIST_HOLDER, retailerViewBeanPagedListHolder);
 	}
 	
 	private PagedListHolder<RetailerViewBean> initList(final HttpServletRequest request, String sessionKey, final RequestData requestData, final List<Retailer> retailers) throws Exception {
-		PagedListHolder<RetailerViewBean> RetailerViewBeanPagedListHolder = new PagedListHolder<RetailerViewBean>();
+		PagedListHolder<RetailerViewBean> retailerViewBeanPagedListHolder = new PagedListHolder<RetailerViewBean>();
 		
 		final List<RetailerViewBean> RetailerViewBeans = new ArrayList<RetailerViewBean>();
 		for (Iterator<Retailer> iterator = retailers.iterator(); iterator.hasNext();) {
 			Retailer retailerIt = (Retailer) iterator.next();
 			RetailerViewBeans.add(backofficeViewBeanFactory.buildViewBeanRetailer(requestData, retailerIt));
 		}
-		RetailerViewBeanPagedListHolder = new PagedListHolder<RetailerViewBean>(RetailerViewBeans);
-		RetailerViewBeanPagedListHolder.setPageSize(Constants.PAGE_SIZE);
-        request.getSession().setAttribute(sessionKey, RetailerViewBeanPagedListHolder); 
+		retailerViewBeanPagedListHolder = new PagedListHolder<RetailerViewBean>(RetailerViewBeans);
+		retailerViewBeanPagedListHolder.setPageSize(Constants.PAGE_SIZE);
+        request.getSession().setAttribute(sessionKey, retailerViewBeanPagedListHolder); 
         
-        return RetailerViewBeanPagedListHolder;
+        return retailerViewBeanPagedListHolder;
 	}
     
 	/**
@@ -325,7 +320,7 @@ public class RetailerController extends AbstractBusinessBackofficeController {
 				});
 	        }
 		} catch (Exception e) {
-			logger.error("", e);
+			logger.error(e.getMessage(), e);
 		}
 		return warehousesValues;
     }

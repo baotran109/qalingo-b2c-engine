@@ -122,7 +122,6 @@ import org.hoteia.qalingo.core.web.mvc.viewbean.RetailerTagViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.RetailerViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.SecurityViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.ShareOptionViewBean;
-import org.hoteia.qalingo.core.web.mvc.viewbean.StoreLocatorViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.StoreViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.TaxViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.ValueBean;
@@ -433,12 +432,16 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     public RetailerViewBean buildViewBeanRetailer(final RequestData requestData, final Retailer retailer) throws Exception {
         final HttpServletRequest request = requestData.getRequest();
         final MarketArea marketArea = requestData.getMarketArea();
+        final Localization localization = requestData.getMarketAreaLocalization();
+        final String localizationCodeNavigation = localization.getCode();
         final Locale locale = requestData.getLocale();
 
         final RetailerViewBean retailerViewBean = new RetailerViewBean();
 
         retailerViewBean.setCode(retailer.getCode());
         retailerViewBean.setName(retailer.getName());
+        retailerViewBean.setI18nName(retailer.getI18nName(localizationCodeNavigation));
+
         retailerViewBean.setDescription(retailer.getDescription());
 
         retailerViewBean.setOfficialRetailer(retailer.isOfficialRetailer());
@@ -889,16 +892,13 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public StoreLocatorViewBean buildViewBeanStoreLocator(final RequestData requestData, final List<Store> stores) throws Exception {
-        final Locale locale = requestData.getLocale();
-        StoreLocatorViewBean storeLocator = new StoreLocatorViewBean();
-        storeLocator.setPageTitle(getSpecificMessage(ScopeWebMessage.STORE_LOCATOR, "header.title", locale));
-        storeLocator.setTextHtml(getSpecificMessage(ScopeWebMessage.STORE_LOCATOR, "content.text", locale));
+    public List<StoreViewBean> buildListViewBeanStore(final RequestData requestData, final List<Store> stores) throws Exception {
+        List<StoreViewBean> storeViewBeans = new ArrayList<StoreViewBean>();
         for (Iterator<Store> iterator = stores.iterator(); iterator.hasNext();) {
             final Store store = (Store) iterator.next();
-            storeLocator.getStores().add(buildViewBeanStore(requestData, store));
+            storeViewBeans.add(buildViewBeanStore(requestData, store));
         }
-        return storeLocator;
+        return storeViewBeans;
     }
 
     /**
@@ -930,14 +930,14 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         
         final Asset defaultPackshotImage = store.getDefaultPackshotImage(ImageSize.SMALL.name());
         if (defaultPackshotImage != null) {
-            final String defaultImage = requestUtil.getRetailerOrStoreImageWebPath(requestData.getRequest(), defaultPackshotImage);
+            final String defaultImage = requestUtil.getRetailerOrStoreImageWebPath(defaultPackshotImage);
             storeViewBean.setDefaultImage(defaultImage);
         } else {
             storeViewBean.setDefaultImage("");
         }
         final Asset defaultIconImage = store.getDefaultIconImage();
         if (defaultIconImage != null) {
-            final String iconImage = requestUtil.getRetailerOrStoreImageWebPath(requestData.getRequest(), defaultIconImage);
+            final String iconImage = requestUtil.getRetailerOrStoreImageWebPath(defaultIconImage);
             storeViewBean.setIconImage(iconImage);
         } else {
             storeViewBean.setIconImage("");
@@ -947,7 +947,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
 		if(assets != null){
 	        List<String> sliders = new ArrayList<String>();
 	        for(Asset asset : assets ){
-	            final String iconImage = requestUtil.getRetailerOrStoreImageWebPath(requestData.getRequest(), asset);
+	            final String iconImage = requestUtil.getRetailerOrStoreImageWebPath(asset);
 	            sliders.add(iconImage);
 	        }
 	        storeViewBean.setSliders(sliders);
@@ -1201,7 +1201,6 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
      * 
      */
     public CatalogCategoryViewBean buildViewBeanCatalogCategory(final RequestData requestData, final CatalogCategoryVirtual catalogCategory) throws Exception {
-        final HttpServletRequest request = requestData.getRequest();
         final MarketArea marketArea = requestData.getMarketArea();
         final Localization localization = requestData.getMarketAreaLocalization();
         final String localizationCode = localization.getCode();
@@ -1214,14 +1213,14 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
 
         final Asset defaultBackgroundImage = catalogCategory.getDefaultBackgroundImage();
         if (defaultBackgroundImage != null) {
-            final String backgroundImage = requestUtil.getCatalogImageWebPath(request, defaultBackgroundImage);
+            final String backgroundImage = requestUtil.getCatalogImageWebPath(defaultBackgroundImage);
             catalogCategoryViewBean.setBackgroundImage(backgroundImage);
         } else {
             catalogCategoryViewBean.setBackgroundImage("");
         }
         final Asset defaultSlideshowImage = catalogCategory.getDefaultSlideshowImage();
         if (defaultSlideshowImage != null) {
-            final String slideshowImage = requestUtil.getCatalogImageWebPath(request, defaultSlideshowImage);
+            final String slideshowImage = requestUtil.getCatalogImageWebPath(defaultSlideshowImage);
             catalogCategoryViewBean.setSlideshowImage(slideshowImage);
         } else {
             catalogCategoryViewBean.setBackgroundImage("");
@@ -1229,14 +1228,14 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
 
         final Asset defaultPaskshotImage = catalogCategory.getDefaultPaskshotImage(ImageSize.SMALL.getPropertyKey());
         if (defaultPaskshotImage != null) {
-            final String carouselImage = requestUtil.getCatalogImageWebPath(request, defaultPaskshotImage);
+            final String carouselImage = requestUtil.getCatalogImageWebPath(defaultPaskshotImage);
             catalogCategoryViewBean.setCarouselImage(carouselImage);
         } else {
             catalogCategoryViewBean.setCarouselImage("");
         }
         final Asset defaultIconImage = catalogCategory.getDefaultIconImage();
         if (defaultIconImage != null) {
-            final String iconImage = requestUtil.getCatalogImageWebPath(request, defaultIconImage);
+            final String iconImage = requestUtil.getCatalogImageWebPath(defaultIconImage);
             catalogCategoryViewBean.setIconImage(iconImage);
         } else {
             catalogCategoryViewBean.setIconImage("");
@@ -1327,8 +1326,8 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public ProductMarketingViewBean buildViewBeanProductMarketing(final RequestData requestData, final CatalogCategoryVirtual catalogCategory, final ProductMarketing productMarketing)
-            throws Exception {
+    public ProductMarketingViewBean buildViewBeanProductMarketing(final RequestData requestData, final CatalogCategoryVirtual catalogCategory, 
+                                                                  final ProductMarketing productMarketing) throws Exception {
         final ProductMarketingViewBean productMarketingViewBean = buildViewBeanProductMarketing(requestData, productMarketing);
 
         productMarketingViewBean.setDetailsUrl(urlService.generateUrl(FoUrls.PRODUCT_DETAILS, requestData, catalogCategory, productMarketing, productMarketing.getDefaultProductSku()));
@@ -1370,7 +1369,6 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
      * 
      */
     private ProductMarketingViewBean buildViewBeanProductMarketing(final RequestData requestData, final ProductMarketing productMarketing) throws Exception {
-        final HttpServletRequest request = requestData.getRequest();
         final Localization localization = requestData.getMarketAreaLocalization();
         final String localizationCode = localization.getCode();
         final ProductMarketingViewBean productMarketingViewBean = new ProductMarketingViewBean();
@@ -1385,35 +1383,35 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         DateFormat dateFormat = requestUtil.getFormatDate(requestData, DateFormat.MEDIUM, DateFormat.MEDIUM);
         Date dateCreate = productMarketing.getDateCreate();
         if (dateCreate != null) {
-            productMarketingViewBean.setCreatedDate(dateFormat.format(dateCreate));
+            productMarketingViewBean.setDateCreate(dateFormat.format(dateCreate));
         } else {
-            productMarketingViewBean.setCreatedDate("NA");
+            productMarketingViewBean.setDateCreate("NA");
         }
 
         Date dateUpdate = productMarketing.getDateUpdate();
         if (dateUpdate != null) {
-            productMarketingViewBean.setUpdatedDate(dateFormat.format(dateUpdate));
+            productMarketingViewBean.setDateUpdate(dateFormat.format(dateUpdate));
         } else {
-            productMarketingViewBean.setUpdatedDate("NA");
+            productMarketingViewBean.setDateUpdate("NA");
         }
         
         final Asset defaultBackgroundImage = productMarketing.getDefaultBackgroundImage();
         if (defaultBackgroundImage != null) {
-            final String backgroundImage = requestUtil.getProductMarketingImageWebPath(request, defaultBackgroundImage);
+            final String backgroundImage = requestUtil.getProductMarketingImageWebPath(defaultBackgroundImage);
             productMarketingViewBean.setBackgroundImage(backgroundImage);
         } else {
             productMarketingViewBean.setBackgroundImage("");
         }
         final Asset defaultPaskshotImage = productMarketing.getDefaultPaskshotImage(ImageSize.SMALL.name());
         if (defaultPaskshotImage != null) {
-            final String carouselImage = requestUtil.getProductMarketingImageWebPath(request, defaultPaskshotImage);
+            final String carouselImage = requestUtil.getProductMarketingImageWebPath(defaultPaskshotImage);
             productMarketingViewBean.setCarouselImage(carouselImage);
         } else {
             productMarketingViewBean.setCarouselImage("");
         }
         final Asset defaultIconImage = productMarketing.getDefaultIconImage();
         if (defaultIconImage != null) {
-            final String iconImage = requestUtil.getProductMarketingImageWebPath(request, defaultIconImage);
+            final String iconImage = requestUtil.getProductMarketingImageWebPath(defaultIconImage);
             productMarketingViewBean.setIconImage(iconImage);
         } else {
             productMarketingViewBean.setIconImage("");
@@ -1447,8 +1445,8 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public ProductSkuViewBean buildViewBeanProductSku(final RequestData requestData, final CatalogCategoryVirtual catalogCategory, final ProductMarketing productMarketing, final ProductSku productSku)
-            throws Exception {
+    public ProductSkuViewBean buildViewBeanProductSku(final RequestData requestData, final CatalogCategoryVirtual catalogCategory, final ProductMarketing productMarketing, 
+                                                      final ProductSku productSku)  throws Exception {
         final ProductSkuViewBean productSkuViewBean = buildViewBeanProductSku(requestData, productMarketing, productSku);
 
         productSkuViewBean.setDetailsUrl(urlService.generateUrl(FoUrls.PRODUCT_DETAILS, requestData, catalogCategory, productMarketing, productSku));
@@ -1469,9 +1467,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public ProductSkuViewBean buildViewBeanProductSku(final RequestData requestData, final ProductMarketing productMarketing, final ProductSku productSku)
-            throws Exception {
-        final HttpServletRequest request = requestData.getRequest();
+    public ProductSkuViewBean buildViewBeanProductSku(final RequestData requestData, final ProductMarketing productMarketing, final ProductSku productSku) throws Exception {
         final Localization localization = requestData.getMarketAreaLocalization();
         final String localizationCode = localization.getCode();
         final MarketArea marketArea = requestData.getMarketArea();
@@ -1488,16 +1484,16 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         DateFormat dateFormat = requestUtil.getFormatDate(requestData, DateFormat.MEDIUM, DateFormat.MEDIUM);
         Date dateCreate = productMarketing.getDateCreate();
         if (dateCreate != null) {
-            productSkuViewBean.setCreatedDate(dateFormat.format(dateCreate));
+            productSkuViewBean.setDateCreate(dateFormat.format(dateCreate));
         } else {
-            productSkuViewBean.setCreatedDate("NA");
+            productSkuViewBean.setDateCreate("NA");
         }
 
         Date dateUpdate = productMarketing.getDateUpdate();
         if (dateUpdate != null) {
-            productSkuViewBean.setUpdatedDate(dateFormat.format(dateUpdate));
+            productSkuViewBean.setDateUpdate(dateFormat.format(dateUpdate));
         } else {
-            productSkuViewBean.setUpdatedDate("NA");
+            productSkuViewBean.setDateUpdate("NA");
         }
         
         final ProductSkuPrice productSkuPrice = productSku.getPrice(marketArea.getId(), retailer.getId());
@@ -1511,21 +1507,21 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
         
         final Asset defaultBackgroundImage = productSku.getDefaultBackgroundImage();
         if (defaultBackgroundImage != null) {
-            String backgroundImage = requestUtil.getProductSkuImageWebPath(request, defaultBackgroundImage);
+            String backgroundImage = requestUtil.getProductSkuImageWebPath(defaultBackgroundImage);
             productSkuViewBean.setBackgroundImage(backgroundImage);
         } else {
             productSkuViewBean.setBackgroundImage("");
         }
         final Asset defaultPaskshotImage = productMarketing.getDefaultPaskshotImage(ImageSize.SMALL.name());
         if (defaultPaskshotImage != null) {
-            String carouselImage = requestUtil.getProductSkuImageWebPath(request, defaultPaskshotImage);
+            String carouselImage = requestUtil.getProductSkuImageWebPath(defaultPaskshotImage);
             productSkuViewBean.setCarouselImage(carouselImage);
         } else {
             productSkuViewBean.setCarouselImage("");
         }
         final Asset defaultIconImage = productSku.getDefaultIconImage();
         if (defaultIconImage != null) {
-            String iconImage = requestUtil.getProductSkuImageWebPath(request, defaultIconImage);
+            String iconImage = requestUtil.getProductSkuImageWebPath(defaultIconImage);
             productSkuViewBean.setIconImage(iconImage);
         } else {
             productSkuViewBean.setIconImage("");
@@ -1539,8 +1535,8 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public ProductAssociationLinkViewBean buildViewBeanProductAssociationLink(final RequestData requestData, final CatalogCategoryMaster catalogCategory, final ProductMarketing productMarketing)
-            throws Exception {
+    public ProductAssociationLinkViewBean buildViewBeanProductAssociationLink(final RequestData requestData, final CatalogCategoryMaster catalogCategory, 
+                                                                              final ProductMarketing productMarketing) throws Exception {
         final ProductAssociationLinkViewBean productAssociationLinkViewBean = buildViewBeanProductAssociationLink(requestData, productMarketing);
 
         productAssociationLinkViewBean.setProductDetailsUrl(urlService.generateUrl(FoUrls.PRODUCT_DETAILS, requestData, catalogCategory, productMarketing, productMarketing.getDefaultProductSku()));
@@ -1551,8 +1547,8 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public ProductAssociationLinkViewBean buildViewBeanProductAssociationLink(final RequestData requestData, final CatalogCategoryVirtual catalogCategory, final ProductMarketing productMarketing)
-            throws Exception {
+    public ProductAssociationLinkViewBean buildViewBeanProductAssociationLink(final RequestData requestData, final CatalogCategoryVirtual catalogCategory, 
+                                                                              final ProductMarketing productMarketing) throws Exception {
         final ProductAssociationLinkViewBean productAssociationLinkViewBean = buildViewBeanProductAssociationLink(requestData, productMarketing);
 
         productAssociationLinkViewBean.setProductDetailsUrl(urlService.generateUrl(FoUrls.PRODUCT_DETAILS, requestData, catalogCategory, productMarketing, productMarketing.getDefaultProductSku()));
@@ -1563,9 +1559,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
     /**
      * 
      */
-    public ProductAssociationLinkViewBean buildViewBeanProductAssociationLink(final RequestData requestData, final ProductMarketing productMarketing)
-            throws Exception {
-        final HttpServletRequest request = requestData.getRequest();
+    public ProductAssociationLinkViewBean buildViewBeanProductAssociationLink(final RequestData requestData, final ProductMarketing productMarketing) throws Exception {
         final Localization localization = requestData.getMarketAreaLocalization();
         final String localizationCode = localization.getCode();
         final ProductAssociationLinkViewBean productAssociationLinkViewBean = new ProductAssociationLinkViewBean();
@@ -1577,21 +1571,21 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
 
         final Asset defaultBackgroundImage = productMarketing.getDefaultBackgroundImage();
         if (defaultBackgroundImage != null) {
-            String backgroundImage = requestUtil.getProductMarketingImageWebPath(request, defaultBackgroundImage);
+            String backgroundImage = requestUtil.getProductMarketingImageWebPath(defaultBackgroundImage);
             productAssociationLinkViewBean.setBackgroundImage(backgroundImage);
         } else {
             productAssociationLinkViewBean.setBackgroundImage("");
         }
         final Asset defaultPaskshotImage = productMarketing.getDefaultPaskshotImage(ImageSize.SMALL.name());
         if (defaultPaskshotImage != null) {
-            String carouselImage = requestUtil.getProductMarketingImageWebPath(request, defaultPaskshotImage);
+            String carouselImage = requestUtil.getProductMarketingImageWebPath(defaultPaskshotImage);
             productAssociationLinkViewBean.setCrossLinkImage(carouselImage);
         } else {
             productAssociationLinkViewBean.setCrossLinkImage("");
         }
         final Asset defaultIconImage = productMarketing.getDefaultIconImage();
         if (defaultIconImage != null) {
-            String iconImage = requestUtil.getProductMarketingImageWebPath(request, defaultIconImage);
+            String iconImage = requestUtil.getProductMarketingImageWebPath(defaultIconImage);
             productAssociationLinkViewBean.setIconImage(iconImage);
         } else {
             productAssociationLinkViewBean.setIconImage("");
@@ -1680,7 +1674,6 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
      * 
      */
     private CartItemViewBean buildViewBeanCartItem(final RequestData requestData, final CartItem cartItem) throws Exception {
-        final HttpServletRequest request = requestData.getRequest();
         final MarketArea marketArea = requestData.getMarketArea();
         final Retailer retailer = requestData.getMarketAreaRetailer();
         final Localization localization = requestData.getMarketAreaLocalization();
@@ -1697,7 +1690,7 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
 
         final Asset defaultPaskshotImage = productSku.getDefaultPaskshotImage(ImageSize.SMALL.name());
         if (defaultPaskshotImage != null) {
-            String summaryImage = requestUtil.getProductMarketingImageWebPath(request, defaultPaskshotImage);
+            String summaryImage = requestUtil.getProductMarketingImageWebPath(defaultPaskshotImage);
             cartItemViewBean.setSummaryImage(summaryImage);
         } else {
             cartItemViewBean.setSummaryImage("");
@@ -1755,16 +1748,16 @@ public class ViewBeanFactoryImpl extends AbstractViewBeanFactory implements View
             
             Date dateCreate = order.getDateCreate();
             if (dateCreate != null) {
-                orderViewBean.setCreatedDate(dateFormat.format(dateCreate));
+                orderViewBean.setDateCreate(dateFormat.format(dateCreate));
             } else {
-                orderViewBean.setCreatedDate("NA");
+                orderViewBean.setDateCreate("NA");
             }
 
             Date dateUpdate = order.getDateUpdate();
             if (dateUpdate != null) {
-                orderViewBean.setUpdatedDate(dateFormat.format(dateUpdate));
+                orderViewBean.setDateUpdate(dateFormat.format(dateUpdate));
             } else {
-                orderViewBean.setUpdatedDate("NA");
+                orderViewBean.setDateUpdate("NA");
             }
             
             // ITEMS PART
