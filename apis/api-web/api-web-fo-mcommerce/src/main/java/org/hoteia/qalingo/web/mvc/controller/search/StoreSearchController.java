@@ -35,7 +35,6 @@ import org.hoteia.qalingo.core.solr.service.impl.AbstractSolrService;
 import org.hoteia.qalingo.core.web.mvc.viewbean.CartViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.RecentProductViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.SearchStoreItemViewBean;
-import org.hoteia.qalingo.core.web.mvc.viewbean.SearchViewBean;
 import org.hoteia.qalingo.core.web.servlet.ModelAndViewThemeDevice;
 import org.hoteia.qalingo.core.web.servlet.view.RedirectView;
 import org.hoteia.qalingo.web.mvc.controller.AbstractMCommerceController;
@@ -77,8 +76,8 @@ public class StoreSearchController extends AbstractMCommerceController {
 			return displaySearch(request, response, modelMap);
 		}
 
-		final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
-		modelAndView.addObject("search", search);
+//		final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
+//		modelAndView.addObject("search", search);
 		
 		String url = requestUtil.getCurrentRequestUrl(request);
 		
@@ -145,7 +144,7 @@ public class StoreSearchController extends AbstractMCommerceController {
 			return displaySearch(request, response, modelMap);
 		}
 		
-		final List<String> listId = requestUtil.getRecentProductIdsFromCookie(request);
+		final List<String> listId = requestUtil.getRecentProductSkuCodesFromCookie(request);
         List<RecentProductViewBean> recentProductViewBeans = frontofficeViewBeanFactory.buildListViewBeanRecentProduct(requestData, listId);
         modelAndView.addObject(ModelConstants.RECENT_PPRODUCT_MARKETING_VIEW_BEAN, recentProductViewBeans);
         
@@ -162,12 +161,12 @@ public class StoreSearchController extends AbstractMCommerceController {
         ModelAndViewThemeDevice modelAndView = new ModelAndViewThemeDevice(getCurrentVelocityPath(request), FoUrls.STORE_SEARCH.getVelocityPage());
         final RequestData requestData = requestUtil.getRequestData(request);
 
-        final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
-        modelAndView.addObject("search", search);
+//        final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
+//        modelAndView.addObject("search", search);
 
         modelAndView.addObject("searchForm", formFactory.buildSearchForm(requestData));
 
-        final List<String> listId = requestUtil.getRecentProductIdsFromCookie(request);
+        final List<String> listId = requestUtil.getRecentProductSkuCodesFromCookie(request);
         List<RecentProductViewBean> recentProductViewBeans = frontofficeViewBeanFactory.buildListViewBeanRecentProduct(requestData, listId);
         modelAndView.addObject(ModelConstants.RECENT_PPRODUCT_MARKETING_VIEW_BEAN, recentProductViewBeans);
 

@@ -12,6 +12,7 @@ package org.hoteia.qalingo.core.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.hoteia.qalingo.core.dao.RetailerDao;
 import org.hoteia.qalingo.core.domain.EngineSetting;
 import org.hoteia.qalingo.core.domain.Retailer;
@@ -104,42 +105,36 @@ public class RetailerServiceImpl implements RetailerService {
         retailerDao.deleteRetailer(retailer);
     }
     
-    public String getRetailerLogoFilePath(final String logo) {
+    public String buildRetailerLogoFilePath(final Retailer retailer, final String logo) {
           String assetfileRootPath = engineSettingService.getAssetFileRootPath().getDefaultValue();
-          assetfileRootPath.replaceAll("\\\\", "/");
           if (assetfileRootPath.endsWith("/")) {
               assetfileRootPath = assetfileRootPath.substring(0, assetfileRootPath.length() - 1);
           }
           
           String retailerLogoFilePath = engineSettingService.getAssetRetailerAndStoreFilePath().getDefaultValue();
-          retailerLogoFilePath.replaceAll("\\\\", "/");
           if (retailerLogoFilePath.endsWith("/")) {
               retailerLogoFilePath = retailerLogoFilePath.substring(0, retailerLogoFilePath.length() - 1);
           }
           if (!retailerLogoFilePath.startsWith("/")) {
               retailerLogoFilePath = "/" + retailerLogoFilePath;
           }
-          String absoluteFolderPath = new StringBuilder(assetfileRootPath).append(retailerLogoFilePath).append("/retailer-logo/").toString();
+          String absoluteFolderPath = new StringBuilder(assetfileRootPath).append(retailerLogoFilePath).append("/retailer-logo/").append(retailer.getCode()).append("/").toString();
           String absoluteFilePath = new StringBuilder(absoluteFolderPath).append(logo).toString();
-          return absoluteFilePath;
+          return FilenameUtils.separatorsToSystem(absoluteFilePath);
     }
     
-    protected String getRetailerLogoWebPathPrefix() throws Exception {
+    public String buildRetailerLogoWebPath(final String logo) throws Exception {
         EngineSetting engineSetting = engineSettingService.getAssetRetailerAndStoreFilePath();
         String prefixPath = "";
         if (engineSetting != null) {
             prefixPath = engineSetting.getDefaultValue();
         }
-        String retailerLogoWebPathPrefix = getRootAssetWebPath() + prefixPath + "/retailer-logo/";
-        return retailerLogoWebPathPrefix;
-    }
-    
-    public String getRetailerLogoWebPath(final String logo) throws Exception {
-        String retailerLogoWebPath = getRetailerLogoWebPathPrefix() + logo;
+        String retailerLogoWebPathPrefix = buildRootAssetWebPath() + prefixPath + "/retailer-logo/";
+        String retailerLogoWebPath = retailerLogoWebPathPrefix + logo;
         return retailerLogoWebPath;
     }
     
-    protected String getRootAssetWebPath() throws Exception {
+    protected String buildRootAssetWebPath() throws Exception {
         EngineSetting engineSetting = engineSettingService.getAssetWebRootPath();
         String prefixPath = "";
         if (engineSetting != null) {
@@ -195,6 +190,10 @@ public class RetailerServiceImpl implements RetailerService {
     
     public List<Store> findStoresByRetailerId(final Long retailerId, Object... params) {
         return retailerDao.findStoresByRetailerId(retailerId, params);
+    }
+    
+    public List<Store> findStoresByRetailerCode(final String retailerCode, Object... params) {
+        return retailerDao.findStoresByRetailerCode(retailerCode, params);
     }
 
     public void saveOrUpdateStore(final Store store) {

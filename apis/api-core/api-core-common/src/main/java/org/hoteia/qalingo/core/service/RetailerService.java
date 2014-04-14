@@ -50,9 +50,9 @@ public interface RetailerService {
 	
 	void deleteRetailer(Retailer retailer);
 	
-	String getRetailerLogoFilePath(String logo);
+	String buildRetailerLogoFilePath(Retailer retailer, String logo);
 	
-	String getRetailerLogoWebPath(String logo) throws Exception;
+	String buildRetailerLogoWebPath(String logo) throws Exception;
 	
     // RETAILER COMMENT/RATE
 	
@@ -75,7 +75,9 @@ public interface RetailerService {
 	List<Store> findStores(Object... params);
 	
 	List<Store> findStoresByRetailerId(Long retailerId, Object... params);
-	
+
+    List<Store> findStoresByRetailerCode(String retailerCode, Object... params);
+
 	void saveOrUpdateStore(Store store);
 	
 	void deleteStore(Store store);

@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,9 +44,11 @@ import org.hoteia.qalingo.core.domain.ProductMarketing;
 import org.hoteia.qalingo.core.domain.ProductSku;
 import org.hoteia.qalingo.core.domain.Retailer;
 import org.hoteia.qalingo.core.domain.RetailerAddress;
+import org.hoteia.qalingo.core.domain.Store;
 import org.hoteia.qalingo.core.domain.Tax;
 import org.hoteia.qalingo.core.domain.User;
 import org.hoteia.qalingo.core.domain.Warehouse;
+import org.hoteia.qalingo.core.domain.WarehouseMarketAreaRel;
 import org.hoteia.qalingo.core.exception.UniqueConstraintCodeCategoryException;
 import org.hoteia.qalingo.core.pojo.RequestData;
 import org.hoteia.qalingo.core.service.AttributeService;
@@ -71,6 +73,7 @@ import org.hoteia.qalingo.core.web.mvc.form.PaymentGatewayForm;
 import org.hoteia.qalingo.core.web.mvc.form.ProductMarketingForm;
 import org.hoteia.qalingo.core.web.mvc.form.ProductSkuForm;
 import org.hoteia.qalingo.core.web.mvc.form.RetailerForm;
+import org.hoteia.qalingo.core.web.mvc.form.StoreForm;
 import org.hoteia.qalingo.core.web.mvc.form.TaxForm;
 import org.hoteia.qalingo.core.web.mvc.form.UserForm;
 import org.hoteia.qalingo.core.web.mvc.form.WarehouseForm;
@@ -212,7 +215,7 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
 			if(catalogCategory.getDefaultParentCatalogCategory() == null
 					|| (catalogCategory.getDefaultParentCatalogCategory() != null
 						&& !catalogCategoryForm.getDefaultParentCategoryCode().equalsIgnoreCase(catalogCategory.getDefaultParentCatalogCategory().getCode()))) {
-				final CatalogCategoryMaster parentCatalogCategory = catalogCategoryService.getMasterCatalogCategoryByCode(currentMarketArea.getId(), catalogCategoryForm.getDefaultParentCategoryCode());
+				final CatalogCategoryMaster parentCatalogCategory = catalogCategoryService.getMasterCatalogCategoryByCode(catalogCategoryForm.getDefaultParentCategoryCode());
 				catalogCategory.setDefaultParentCatalogCategory(parentCatalogCategory);
 			}
 		}
@@ -279,7 +282,7 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
 			if(catalogCategory.getDefaultParentCatalogCategory() == null
 					|| (catalogCategory.getDefaultParentCatalogCategory() != null
 						&& !catalogCategoryForm.getDefaultParentCategoryCode().equalsIgnoreCase(catalogCategory.getDefaultParentCatalogCategory().getCode()))) {
-				final CatalogCategoryVirtual parentCatalogCategory = catalogCategoryService.getVirtualCatalogCategoryByCode(currentMarketArea.getId(), catalogCategoryForm.getDefaultParentCategoryCode());
+				final CatalogCategoryVirtual parentCatalogCategory = catalogCategoryService.getVirtualCatalogCategoryByCode(catalogCategoryForm.getDefaultParentCategoryCode());
 				catalogCategory.setDefaultParentCatalogCategory(parentCatalogCategory);
 			}
 		}
@@ -459,32 +462,33 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
         MultipartFile multipartFile = retailerForm.getFile();
         if (multipartFile.getSize() > 0) {
             UUID uuid = UUID.randomUUID();
-            String pathRetailerLogoImage = new StringBuilder(uuid.toString()).append(".").append(FilenameUtils.getExtension(multipartFile.getOriginalFilename())).toString();
+            String pathRetailerLogoImage = new StringBuilder(uuid.toString()).append(System.getProperty ("file.separator")).append(FilenameUtils.getExtension(multipartFile.getOriginalFilename())).toString();
 
-            String absoluteFilePath = retailerService.getRetailerLogoFilePath(pathRetailerLogoImage);
+            String absoluteFilePath = retailerService.buildRetailerLogoFilePath(retailer, pathRetailerLogoImage);
             String absoluteFolderPath = absoluteFilePath.replace(pathRetailerLogoImage, "");
-
+            
             InputStream inputStream = multipartFile.getInputStream();
-            URI fileUrl = new URI(absoluteFilePath);
-            File fileLogo;
-            File folderLogo;
+            File fileLogo = null;
+            File folderLogo = null;
             try {
                 folderLogo = new File(absoluteFolderPath);
                 folderLogo.mkdirs();
-                fileLogo = new File(fileUrl);
+                fileLogo = new File(absoluteFilePath);
                 
-            } catch (IllegalArgumentException e) {
-                fileLogo = new File(fileUrl.getPath());
+            } catch (Exception e) {
+                //
             }
-            OutputStream outputStream = new FileOutputStream(fileLogo);
-            int readBytes = 0;
-            byte[] buffer = new byte[8192];
-            while ((readBytes = inputStream.read(buffer, 0, 8192)) != -1) {
-                outputStream.write(buffer, 0, readBytes);
+            if(fileLogo != null){
+                OutputStream outputStream = new FileOutputStream(fileLogo);
+                int readBytes = 0;
+                byte[] buffer = new byte[8192];
+                while ((readBytes = inputStream.read(buffer, 0, 8192)) != -1) {
+                    outputStream.write(buffer, 0, readBytes);
+                }
+                outputStream.close();
+                inputStream.close();
+                retailer.setLogo(pathRetailerLogoImage);
             }
-            outputStream.close();
-            inputStream.close();
-            retailer.setLogo(pathRetailerLogoImage);
         }
 		
 		retailerService.saveOrUpdateRetailer(retailer);
@@ -493,14 +497,27 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
     public void createOrUpdateWarehouse(final RequestData requestData, Warehouse warehouse, final WarehouseForm warehouseForm) {
         if (warehouse == null) {
             warehouse = new Warehouse();
-            Set<MarketArea> marketAreas = new HashSet<MarketArea>();
-            marketAreas.add(requestData.getMarketArea());
-            warehouse.setMarketAreas(marketAreas);
+            Set<WarehouseMarketAreaRel> warehouseMarketAreas = new HashSet<WarehouseMarketAreaRel>();
+            WarehouseMarketAreaRel warehouseMarketArea = new WarehouseMarketAreaRel();
+            warehouseMarketArea.setMarketArea(requestData.getMarketArea());
+            warehouseMarketAreas.add(warehouseMarketArea);
+            warehouse.setWarehouseMarketAreaRels(warehouseMarketAreas);
         }
         warehouse.setCode(warehouseForm.getCode());
         warehouse.setName(warehouseForm.getName());
         warehouse.setDescription(warehouseForm.getDescription());
 
+        warehouse.setAddress1(warehouseForm.getAddress1());
+        warehouse.setAddress2(warehouseForm.getAddress2());
+        warehouse.setAddressAdditionalInformation(warehouseForm.getAddressAdditionalInformation());
+        warehouse.setPostalCode(warehouseForm.getPostalCode());
+        warehouse.setCity(warehouseForm.getCity());
+        warehouse.setStateCode(warehouseForm.getStateCode());
+        warehouse.setCountryCode(warehouseForm.getCountryCode());
+
+        warehouse.setLatitude(warehouseForm.getLatitude());
+        warehouse.setLongitude(warehouseForm.getLongitude());
+        
         warehouseService.saveOrUpdateWarehouse(warehouse);
     }
 
@@ -522,6 +539,7 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
         tax.setCode(taxForm.getCode());
         tax.setName(taxForm.getName());
         tax.setDescription(taxForm.getDescription());
+        tax.setPercent(new BigDecimal(taxForm.getPercent()));
 
         taxService.saveOrUpdateTax(tax);
     }
@@ -600,6 +618,31 @@ public class WebBackofficeServiceImpl implements WebBackofficeService {
 
             engineSettingService.saveOrUpdateEngineSettingValue(engineSettingValue);
         }
+    }
+    
+    public void createOrUpdateStore(Retailer retailer, Store store, StoreForm storeForm) throws Exception {
+    	if (store == null) {
+    		store = new Store();
+	    }
+    	store.setCode(storeForm.getCode());
+    	store.setName(storeForm.getName());
+		
+    	store.setAddress1(storeForm.getAddress1());
+    	store.setAddress2(storeForm.getAddress2());
+    	store.setAddressAdditionalInformation(storeForm.getAddressAdditionalInformation());
+    	store.setPostalCode(storeForm.getPostalCode());
+    	store.setCity(storeForm.getCity());
+    	store.setStateCode(storeForm.getStateCode());
+    	store.setCountryCode(storeForm.getCountryCode());
+
+        store.setLatitude(storeForm.getLatitude());
+        store.setLongitude(storeForm.getLongitude());
+
+    	if(retailer != null){
+            store.setRetailer(retailer);
+    	}
+		
+		retailerService.saveOrUpdateStore(store);
     }
     
 }

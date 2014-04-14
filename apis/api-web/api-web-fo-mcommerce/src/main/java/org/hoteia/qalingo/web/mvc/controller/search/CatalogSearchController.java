@@ -22,6 +22,7 @@ import org.hoteia.qalingo.core.domain.Cart;
 import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
 import org.hoteia.qalingo.core.domain.MarketArea;
 import org.hoteia.qalingo.core.domain.ProductMarketing;
+import org.hoteia.qalingo.core.domain.ProductSku;
 import org.hoteia.qalingo.core.domain.Retailer;
 import org.hoteia.qalingo.core.domain.enumtype.FoUrls;
 import org.hoteia.qalingo.core.pojo.RequestData;
@@ -33,7 +34,6 @@ import org.hoteia.qalingo.core.solr.service.impl.AbstractSolrService;
 import org.hoteia.qalingo.core.web.mvc.viewbean.CartViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.RecentProductViewBean;
 import org.hoteia.qalingo.core.web.mvc.viewbean.SearchProductItemViewBean;
-import org.hoteia.qalingo.core.web.mvc.viewbean.SearchViewBean;
 import org.hoteia.qalingo.core.web.servlet.ModelAndViewThemeDevice;
 import org.hoteia.qalingo.core.web.servlet.view.RedirectView;
 import org.hoteia.qalingo.web.mvc.controller.AbstractMCommerceController;
@@ -75,8 +75,8 @@ public class CatalogSearchController extends AbstractMCommerceController {
 			return displaySearch(request, response, modelMap);
 		}
 
-		final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
-		modelAndView.addObject("search", search);
+//		final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
+//		modelAndView.addObject("search", search);
 		
 		String url = requestUtil.getCurrentRequestUrl(request);
 		
@@ -130,7 +130,7 @@ public class CatalogSearchController extends AbstractMCommerceController {
 			return displaySearch(request, response, modelMap);
 		}
 		
-		final List<String> listId = requestUtil.getRecentProductIdsFromCookie(request);
+		final List<String> listId = requestUtil.getRecentProductSkuCodesFromCookie(request);
         List<RecentProductViewBean> recentProductViewBeans = frontofficeViewBeanFactory.buildListViewBeanRecentProduct(requestData, listId);
         modelAndView.addObject(ModelConstants.RECENT_PPRODUCT_MARKETING_VIEW_BEAN, recentProductViewBeans);
         
@@ -147,12 +147,12 @@ public class CatalogSearchController extends AbstractMCommerceController {
         ModelAndViewThemeDevice modelAndView = new ModelAndViewThemeDevice(getCurrentVelocityPath(request), FoUrls.CATALOG_SEARCH.getVelocityPage());
         final RequestData requestData = requestUtil.getRequestData(request);
 
-        final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
-        modelAndView.addObject("search", search);
+//        final SearchViewBean search = frontofficeViewBeanFactory.buildViewBeanSearch(requestData);
+//        modelAndView.addObject("search", search);
 
         modelAndView.addObject("searchForm", formFactory.buildSearchForm(requestData));
 
-        final List<String> listId = requestUtil.getRecentProductIdsFromCookie(request);
+        final List<String> listId = requestUtil.getRecentProductSkuCodesFromCookie(request);
         List<RecentProductViewBean> recentProductViewBeans = frontofficeViewBeanFactory.buildListViewBeanRecentProduct(requestData, listId);
         modelAndView.addObject(ModelConstants.RECENT_PPRODUCT_MARKETING_VIEW_BEAN, recentProductViewBeans);
 
@@ -178,12 +178,13 @@ public class CatalogSearchController extends AbstractMCommerceController {
         final Retailer retailer = requestData.getMarketAreaRetailer();
 
         List<ProductMarketing> products = productService.findProductMarketings(null);
-        for (Iterator<ProductMarketing> iterator = products.iterator(); iterator.hasNext();) {
-            ProductMarketing productMarketing = (ProductMarketing) iterator.next();
-            
-            List<CatalogCategoryVirtual> catalogCategories = catalogCategoryService.findVirtualCategoriesByProductMarketingId(marketArea.getId(), productMarketing.getCode()); 
-            
-            productMarketingSolrService.addOrUpdateProductMarketing(productMarketing, catalogCategories, marketArea, retailer);
+        for (Iterator<ProductMarketing> iteratorProductMarketing = products.iterator(); iteratorProductMarketing.hasNext();) {
+            ProductMarketing productMarketing = (ProductMarketing) iteratorProductMarketing.next();
+            for (Iterator<ProductSku> iteratorProductSku = productMarketing.getProductSkus().iterator(); iteratorProductSku.hasNext();) {
+                ProductSku productSku = (ProductSku) iteratorProductSku.next();
+                List<CatalogCategoryVirtual> catalogCategories = catalogCategoryService.findVirtualCategoriesByProductSkuId(productSku.getId()); 
+                productMarketingSolrService.addOrUpdateProductMarketing(productMarketing, catalogCategories, marketArea, retailer);
+            }
         }
 
         return new ModelAndView(new RedirectView(urlService.generateUrl(FoUrls.CATALOG_SEARCH, requestUtil.getRequestData(request))));

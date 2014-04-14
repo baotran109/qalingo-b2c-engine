@@ -54,9 +54,6 @@ public class CatalogCategoryViewBean extends AbstractViewBean implements Seriali
     protected String detailsUrl;
     protected String editUrl;
     
-    protected String dateCreate;
-    protected String dateUpdate;
-    
     public String getCode() {
         return code;
     }
@@ -120,7 +117,7 @@ public class CatalogCategoryViewBean extends AbstractViewBean implements Seriali
     }
 
     public String getSlideshowImage() {
-        return slideshowImage;
+        return handleString(slideshowImage);
     }
     
     public void setSlideshowImage(String slideshowImage) {
@@ -128,7 +125,7 @@ public class CatalogCategoryViewBean extends AbstractViewBean implements Seriali
     }
     
     public String getIconImage() {
-        return iconImage;
+        return handleString(iconImage);
     }
 
     public void setIconImage(String iconImage) {
@@ -239,20 +236,4 @@ public class CatalogCategoryViewBean extends AbstractViewBean implements Seriali
         this.editUrl = editUrl;
     }
     
-    public String getDateCreate() {
-        return dateCreate;
-    }
-
-    public void setDateCreate(String dateCreate) {
-        this.dateCreate = dateCreate;
-    }
-    
-    public String getDateUpdate() {
-        return dateUpdate;
-    }
-    
-    public void setDateUpdate(String dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
 }

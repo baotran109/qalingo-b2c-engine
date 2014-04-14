@@ -29,7 +29,7 @@ import org.hoteia.qalingo.core.domain.MarketArea;
 import org.hoteia.qalingo.core.domain.Retailer;
 import org.hoteia.qalingo.core.domain.Warehouse;
 import org.hoteia.qalingo.core.domain.enumtype.BoUrls;
-import org.hoteia.qalingo.core.fetchplan.common.FetchPlanGraphCommon;
+import org.hoteia.qalingo.core.fetchplan.retailer.FetchPlanGraphRetailer;
 import org.hoteia.qalingo.core.i18n.enumtype.ScopeWebMessage;
 import org.hoteia.qalingo.core.pojo.RequestData;
 import org.hoteia.qalingo.core.service.RetailerService;
@@ -117,7 +117,7 @@ public class RetailerController extends AbstractBusinessBackofficeController {
             return new ModelAndView(new RedirectView(urlRedirect));
         }
 
-        final Retailer retailer = retailerService.getRetailerByCode(retailerCode);
+        final Retailer retailer = retailerService.getRetailerByCode(retailerCode, FetchPlanGraphRetailer.fullRetailerFetchPlan());
 
         // SANITY CHECK
         if (retailer != null) {
@@ -136,14 +136,14 @@ public class RetailerController extends AbstractBusinessBackofficeController {
 	}
 	
 	@RequestMapping(value = BoUrls.RETAILER_EDIT_URL, method = RequestMethod.GET)
-	public ModelAndView retailerEdit(final HttpServletRequest request, final Model model, @ModelAttribute("retailerForm") RetailerForm retailerForm) throws Exception {
+	public ModelAndView retailerEdit(final HttpServletRequest request, final Model model, @ModelAttribute(ModelConstants.RETAILER_FORM) RetailerForm retailerForm) throws Exception {
         ModelAndViewThemeDevice modelAndView = new ModelAndViewThemeDevice(getCurrentVelocityPath(request), BoUrls.RETAILER_EDIT.getVelocityPage());
         final RequestData requestData = requestUtil.getRequestData(request);
         
         final String retailerCode = request.getParameter(RequestConstants.REQUEST_PARAMETER_RETAILER_CODE);
         if(StringUtils.isNotEmpty(retailerCode)){
             // EDIT MODE
-            final Retailer retailer = retailerService.getRetailerByCode(retailerCode);
+            final Retailer retailer = retailerService.getRetailerByCode(retailerCode, FetchPlanGraphRetailer.fullRetailerFetchPlan());
 
             // SANITY CHECK
             if (retailer != null) {
@@ -170,7 +170,7 @@ public class RetailerController extends AbstractBusinessBackofficeController {
 	}
 	
 	@RequestMapping(value = BoUrls.RETAILER_EDIT_URL, method = RequestMethod.POST)
-	public ModelAndView submitRetailerEdit(final HttpServletRequest request, final Model model, @Valid @ModelAttribute("retailerForm") RetailerForm retailerForm,
+	public ModelAndView submitRetailerEdit(final HttpServletRequest request, final Model model, @Valid @ModelAttribute(ModelConstants.RETAILER_FORM) RetailerForm retailerForm,
 								BindingResult result, ModelMap modelMap) throws Exception {
         final RequestData requestData = requestUtil.getRequestData(request);
         final Locale locale = requestData.getLocale();
@@ -261,12 +261,12 @@ public class RetailerController extends AbstractBusinessBackofficeController {
 	/**
 	 * 
 	 */
-    @ModelAttribute("retailerForm")
+    @ModelAttribute(ModelConstants.RETAILER_FORM)
 	protected RetailerForm initRetailerForm(final HttpServletRequest request, final Model model) throws Exception {
 		final RequestData requestData = requestUtil.getRequestData(request);
 		final String retailerCode = request.getParameter(RequestConstants.REQUEST_PARAMETER_RETAILER_CODE);
 		if(StringUtils.isNotEmpty(retailerCode)){
-	        final Retailer retailer = retailerService.getRetailerByCode(retailerCode, FetchPlanGraphCommon.fullRetailerFetchPlan());
+	        final Retailer retailer = retailerService.getRetailerByCode(retailerCode, FetchPlanGraphRetailer.fullRetailerFetchPlan());
 	        return backofficeFormFactory.buildRetailerForm(requestData, retailer);
 		}
     	return backofficeFormFactory.buildRetailerForm(requestData, null);
@@ -303,9 +303,7 @@ public class RetailerController extends AbstractBusinessBackofficeController {
     public List<ValueBean> getWarehouses(HttpServletRequest request) throws Exception{
     	List<ValueBean> warehousesValues = new ArrayList<ValueBean>();
 		try {
-	        final RequestData requestData = requestUtil.getRequestData(request);
-	        final MarketArea marketArea = requestData.getMarketArea();
-	        List<Warehouse> warehouses = warehouseService.findWarehousesByMarketAreaId(marketArea.getId());
+	        List<Warehouse> warehouses = warehouseService.findWarehouses();
 	        if(warehouses != null){
 		        for (Iterator<Warehouse> iterator = warehouses.iterator(); iterator.hasNext();) {
 		            Warehouse warehouseIt = (Warehouse) iterator.next();

@@ -10,7 +10,6 @@ import org.hoteia.qalingo.core.fetchplan.SpecificFetchMode;
 public class FetchPlanGraphCommon {
 
     public static FetchPlan defaultCartFetchPlan(){
-        
         List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
         
         fetchplans.add(new SpecificFetchMode("session"));
@@ -41,9 +40,11 @@ public class FetchPlanGraphCommon {
     
     public static FetchPlan defaultCatalogFetchPlan() {
         List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
-
-        fetchplans.add(new SpecificFetchMode("catalogCategories"));
-        fetchplans.add(new SpecificFetchMode("catalogCategoryAttributes", new SpecificAlias("catalogCategories.catalogCategoryAttributes")));
+        fetchplans.add(new SpecificFetchMode("catalogVirtualCategoryVirtualRels"));
+        fetchplans.add(new SpecificFetchMode("catalogVirtualCategoryVirtualRels.pk.catalogCategoryVirtual"));
+//        fetchplans.add(new SpecificFetchMode("catalogCategory", new SpecificAlias("catalogVirtualCategoryVirtualRels.pk.catalogCategoryVirtual")));
+        fetchplans.add(new SpecificFetchMode("catalogCategory.catalogCategoryAttributes"));
+        
         return new FetchPlan(fetchplans);
     }
     
@@ -96,41 +97,6 @@ public class FetchPlanGraphCommon {
     public static FetchPlan defaultCompanyFetchPlan() {
         List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
         fetchplans.add(new SpecificFetchMode("localizations"));
-        return new FetchPlan(fetchplans);
-    }
-    
-    public static FetchPlan defaultRetailerFetchPlan() {
-        List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
-        fetchplans.add(new SpecificFetchMode("links"));
-        fetchplans.add(new SpecificFetchMode("addresses"));
-        fetchplans.add(new SpecificFetchMode("stores"));
-        fetchplans.add(new SpecificFetchMode("assets"));
-        fetchplans.add(new SpecificFetchMode("retailerAttributes"));
-        fetchplans.add(new SpecificFetchMode("customerRates"));
-        fetchplans.add(new SpecificFetchMode("customerComments"));
-        fetchplans.add(new SpecificFetchMode("retailerTags"));
-        return new FetchPlan(fetchplans);
-    }
-    
-    public static FetchPlan fullRetailerFetchPlan() {
-    	List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
-        fetchplans.add(new SpecificFetchMode("links"));
-        fetchplans.add(new SpecificFetchMode("addresses"));
-        fetchplans.add(new SpecificFetchMode("stores"));
-        fetchplans.add(new SpecificFetchMode("assets"));
-        fetchplans.add(new SpecificFetchMode("retailerAttributes"));
-        fetchplans.add(new SpecificFetchMode("customerRates"));
-        fetchplans.add(new SpecificFetchMode("customerComments"));
-        fetchplans.add(new SpecificFetchMode("retailerTags"));
-        fetchplans.add(new SpecificFetchMode("warehouse"));
-        return new FetchPlan(fetchplans);
-    }
-    
-    public static FetchPlan defaultStoreFetchPlan() {
-        List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
-        fetchplans.add(new SpecificFetchMode("storeAttributes"));
-        fetchplans.add(new SpecificFetchMode("assets"));
-        fetchplans.add(new SpecificFetchMode("businessHours"));
         return new FetchPlan(fetchplans);
     }
     

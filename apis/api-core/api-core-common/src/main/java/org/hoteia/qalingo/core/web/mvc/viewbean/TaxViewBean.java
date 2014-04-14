@@ -27,12 +27,10 @@ public class TaxViewBean extends AbstractViewBean implements Serializable {
 	protected String code;
 	protected String name;
 	protected String description;
+    protected String percent;
 	
 	protected String detailsUrl;
     protected String editUrl;
-    
-    private String dateCreate;
-    private String dateUpdate;
     
     // MENU
     protected String img;
@@ -93,6 +91,14 @@ public class TaxViewBean extends AbstractViewBean implements Serializable {
 		}
 	    return shortDescription;
     }
+	
+	public String getPercent() {
+        return percent;
+    }
+	
+	public void setPercent(String percent) {
+        this.percent = percent;
+    }
 
     public String getDetailsUrl() {
         return detailsUrl;
@@ -131,22 +137,6 @@ public class TaxViewBean extends AbstractViewBean implements Serializable {
 	
     public String getMetaShareImage() {
         return getImg();
-    }
-
-    public String getDateCreate() {
-        return dateCreate;
-    }
-
-    public void setDateCreate(String dateCreate) {
-        this.dateCreate = dateCreate;
-    }
-
-    public String getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(String dateUpdate) {
-        this.dateUpdate = dateUpdate;
     }
 
     public String getImg() {
