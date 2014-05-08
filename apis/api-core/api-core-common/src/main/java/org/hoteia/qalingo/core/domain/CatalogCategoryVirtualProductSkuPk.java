@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.domain;
 
 import javax.persistence.Embeddable;
@@ -13,17 +22,22 @@ public class CatalogCategoryVirtualProductSkuPk extends AbstractEntity {
      */
     private static final long serialVersionUID = 8745893320688286668L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,  targetEntity = org.hoteia.qalingo.core.domain.CatalogCategoryVirtual.class)
     @JoinColumn(name = "VIRTUAL_CATEGORY_ID")
     private CatalogCategoryVirtual catalogCategoryVirtual;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,  targetEntity = org.hoteia.qalingo.core.domain.ProductSku.class)
     @JoinColumn(name = "PRODUCT_SKU_ID")
     private ProductSku productSku;
     
     public CatalogCategoryVirtualProductSkuPk() {
     }
-
+    
+    public CatalogCategoryVirtualProductSkuPk(final CatalogCategoryVirtual catalogCategoryVirtual, final ProductSku productSku) {
+        this.catalogCategoryVirtual = catalogCategoryVirtual;
+        this.productSku = productSku;
+    }
+    
     public CatalogCategoryVirtual getCatalogCategoryVirtual() {
         return catalogCategoryVirtual;
     }

@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.fetchplan.common;
 
 import java.util.ArrayList;
@@ -15,7 +24,7 @@ public class FetchPlanGraphCommon {
         fetchplans.add(new SpecificFetchMode("session"));
         fetchplans.add(new SpecificFetchMode("cartItems"));
 
-        fetchplans.add(new SpecificFetchMode("productSkuAttributes", new SpecificAlias("cartItems.productSku.productSkuAttributes")));
+        fetchplans.add(new SpecificFetchMode("attributes", new SpecificAlias("cartItems.productSku.attributes")));
 
         fetchplans.add(new SpecificFetchMode("productSkuAssets", new SpecificAlias("cartItems.productSku.assets")));
 
@@ -25,11 +34,11 @@ public class FetchPlanGraphCommon {
 
         fetchplans.add(new SpecificFetchMode("productMarketing", new SpecificAlias("cartItems.productMarketing")));
 
-        fetchplans.add(new SpecificFetchMode("productMarketingAttributes", new SpecificAlias("cartItems.productMarketing.productMarketingAttributes")));
+        fetchplans.add(new SpecificFetchMode("productMarketingAttributes", new SpecificAlias("cartItems.productMarketing.attributes")));
 
         fetchplans.add(new SpecificFetchMode("productMarketingAssets", new SpecificAlias("cartItems.productMarketing.assets")));
 
-        fetchplans.add(new SpecificFetchMode("catalogCategoryAttributes", new SpecificAlias("cartItems.catalogCategory.catalogCategoryAttributes")));
+        fetchplans.add(new SpecificFetchMode("catalogCategoryAttributes", new SpecificAlias("cartItems.catalogCategory.attributes")));
 
         fetchplans.add(new SpecificFetchMode("catalogCategoryAssets", new SpecificAlias("cartItems.catalogCategory.assets")));
 
@@ -40,11 +49,8 @@ public class FetchPlanGraphCommon {
     
     public static FetchPlan defaultCatalogFetchPlan() {
         List<SpecificFetchMode> fetchplans = new ArrayList<SpecificFetchMode>();
-        fetchplans.add(new SpecificFetchMode("catalogVirtualCategoryVirtualRels"));
-        fetchplans.add(new SpecificFetchMode("catalogVirtualCategoryVirtualRels.pk.catalogCategoryVirtual"));
-//        fetchplans.add(new SpecificFetchMode("catalogCategory", new SpecificAlias("catalogVirtualCategoryVirtualRels.pk.catalogCategoryVirtual")));
-        fetchplans.add(new SpecificFetchMode("catalogCategory.catalogCategoryAttributes"));
-        
+        fetchplans.add(new SpecificFetchMode("catalogCategories"));
+        fetchplans.add(new SpecificFetchMode("catalogCategories.attributes"));
         return new FetchPlan(fetchplans);
     }
     
@@ -63,7 +69,7 @@ public class FetchPlanGraphCommon {
         fetchplans.add(new SpecificFetchMode("orderItems", new SpecificAlias("orderShipments.orderItems")));
         
         fetchplans.add(new SpecificFetchMode("productSku", new SpecificAlias("orderShipments.orderItems.productSku")));
-        fetchplans.add(new SpecificFetchMode("productSkuAttributes", new SpecificAlias("orderShipments.orderItems.productSku.productSkuAttributes")));
+        fetchplans.add(new SpecificFetchMode("productSkuAttributes", new SpecificAlias("orderShipments.orderItems.productSku.attributes")));
 
         fetchplans.add(new SpecificFetchMode("assets", new SpecificAlias("orderShipments.orderItems.productSku.assets")));
         fetchplans.add(new SpecificFetchMode("orderTaxes", new SpecificAlias("orderShipments.orderItems.orderTaxes")));

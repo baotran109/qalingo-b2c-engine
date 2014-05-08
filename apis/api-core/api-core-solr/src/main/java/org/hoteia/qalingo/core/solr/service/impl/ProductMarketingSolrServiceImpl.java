@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -22,12 +22,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.hoteia.qalingo.core.Constants;
 import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
 import org.hoteia.qalingo.core.domain.MarketArea;
 import org.hoteia.qalingo.core.domain.ProductMarketing;
 import org.hoteia.qalingo.core.domain.ProductSkuPrice;
 import org.hoteia.qalingo.core.domain.Retailer;
+import org.hoteia.qalingo.core.service.ProductService;
 import org.hoteia.qalingo.core.solr.bean.ProductMarketingSolr;
 import org.hoteia.qalingo.core.solr.response.ProductMarketingResponseBean;
 import org.hoteia.qalingo.core.solr.service.ProductMarketingSolrService;
@@ -46,6 +46,9 @@ public class ProductMarketingSolrServiceImpl extends AbstractSolrService impleme
     @Autowired
     public SolrServer productMarketingSolrServer;
     
+    @Autowired
+    protected ProductService productService;
+    
 	/* (non-Javadoc)
 	 * @see fr.hoteia.qalingo.core.solr.service.ProductMarketingSolrService#addOrUpdateProductMarketing(fr.hoteia.qalingo.core.domain.ProductMarketing)
 	 */
@@ -54,20 +57,21 @@ public class ProductMarketingSolrServiceImpl extends AbstractSolrService impleme
             throw new IllegalArgumentException("Id  cannot be blank or null.");
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Indexing productMarketing " + productMarketing.getId());
-            logger.debug("Indexing productMarketing " + productMarketing.getName());
-            logger.debug("Indexing productMarketing " + productMarketing.getDescription());
-            logger.debug("Indexing productMarketing " + productMarketing.getCode());
+            logger.debug("Indexing productMarketing " + productMarketing.getId() + " : " + productMarketing.getCode() + " : " + productMarketing.getName());
         }
         
         ProductMarketingSolr productSolr = new ProductMarketingSolr();
         productSolr.setId(productMarketing.getId());
+        productSolr.setCode(productMarketing.getCode());
         productSolr.setName(productMarketing.getName());
         productSolr.setDescription(productMarketing.getDescription());
-        productSolr.setCode(productMarketing.getCode());
-        if(productMarketing.getDefaultCatalogCategory() != null){
-            productSolr.setDefaultCategoryCode(productMarketing.getDefaultCatalogCategory().getCode());
+        
+        CatalogCategoryVirtual defaultVirtualCatalogCategory = productService.getDefaultVirtualCatalogCategory(productMarketing, catalogCategories, true);
+
+        if(defaultVirtualCatalogCategory != null){
+            productSolr.setDefaultCategoryCode(defaultVirtualCatalogCategory.getCode());
         }
+        
         ProductSkuPrice productSkuPrice = productMarketing.getDefaultProductSku().getPrice(marketArea.getId(), retailer.getId());
         if(productSkuPrice != null){
             BigDecimal salePrice = productSkuPrice.getSalePrice();
@@ -150,7 +154,7 @@ public class ProductMarketingSolrServiceImpl extends AbstractSolrService impleme
 
         List<ProductMarketingSolr> ProductMarketingSolrList = response.getBeans(ProductMarketingSolr.class);
 
-        logger.debug(" ProductMarketingSolrList: " + ProductMarketingSolrList);
+        logger.debug("ProductMarketingSolrList: " + ProductMarketingSolrList);
 
         ProductMarketingResponseBean productMarketingResponseBean = new ProductMarketingResponseBean();
         productMarketingResponseBean.setProductMarketingSolrList(ProductMarketingSolrList);
@@ -164,7 +168,7 @@ public class ProductMarketingSolrServiceImpl extends AbstractSolrService impleme
 
             productMarketingResponseBean.setProductMarketingSolrFacetFieldList(productSolrFacetFieldList);
 
-            logger.debug(" ProductFacetFileList Add sucessflly in productResponseBeen  ");
+            logger.debug("ProductFacetFileList was successfully added in productResponseBeen  ");
         }
         return productMarketingResponseBean;
     }
@@ -188,7 +192,7 @@ public class ProductMarketingSolrServiceImpl extends AbstractSolrService impleme
         
         List<ProductMarketingSolr> productMarketingSolrList = response.getBeans(ProductMarketingSolr.class);
         
-        logger.debug(" ProductMarketingSolrList: " + productMarketingSolrList);
+        logger.debug("ProductMarketingSolrList: " + productMarketingSolrList);
         
         List<FacetField> productSolrFacetFieldList = response.getFacetFields();
         
@@ -198,7 +202,7 @@ public class ProductMarketingSolrServiceImpl extends AbstractSolrService impleme
         productMarketingResponseBean.setProductMarketingSolrList(productMarketingSolrList);
         productMarketingResponseBean.setProductMarketingSolrFacetFieldList(productSolrFacetFieldList);
         
-        logger.debug("ProductMarketingSolrList  And ProductFacetFileList Add sucessflly in productResponseBeen");
+        logger.debug("ProductMarketingSolrList And ProductFacetFileList was successfully added in productResponseBeen");
         
         return productMarketingResponseBean;
     }

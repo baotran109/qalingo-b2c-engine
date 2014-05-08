@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.web.mvc.viewbean;
 
 import java.io.Serializable;
@@ -16,7 +25,7 @@ public class PaymentGatewayViewBean extends AbstractViewBean implements Serializ
     private String description;
     private boolean active;
     
-    private Map<String, String> globaAttributes = new HashMap<String, String>();
+    private Map<String, String> globalAttributes = new HashMap<String, String>();
     private Map<String, String> marketAreaAttributes = new HashMap<String, String>();
     private Map<String, String> options = new HashMap<String, String>();
 
@@ -55,12 +64,12 @@ public class PaymentGatewayViewBean extends AbstractViewBean implements Serializ
         this.active = active;
     }
     
-    public Map<String, String> getGlobaAttributes() {
-        return globaAttributes;
+    public Map<String, String> getGlobalAttributes() {
+        return globalAttributes;
     }
 
-    public void setGlobaAttributes(Map<String, String> globaAttributes) {
-        this.globaAttributes = globaAttributes;
+    public void setGlobalAttributes(Map<String, String> globalAttributes) {
+        this.globalAttributes = globalAttributes;
     }
 
     public Map<String, String> getMarketAreaAttributes() {

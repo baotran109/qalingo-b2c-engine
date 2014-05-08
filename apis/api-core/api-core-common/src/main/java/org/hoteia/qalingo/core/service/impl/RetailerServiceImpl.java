@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -97,8 +97,8 @@ public class RetailerServiceImpl implements RetailerService {
         return retailerDao.findRetailersByText(marketAreaId, retailerId, searchTxt, params);
     }
 
-    public void saveOrUpdateRetailer(final Retailer retailer) {
-        retailerDao.saveOrUpdateRetailer(retailer);
+    public Retailer saveOrUpdateRetailer(final Retailer retailer) {
+        return retailerDao.saveOrUpdateRetailer(retailer);
     }
 
     public void deleteRetailer(final Retailer retailer) {
@@ -148,16 +148,16 @@ public class RetailerServiceImpl implements RetailerService {
     
     // RETAILER COMMENT/RATE
 
-    public void saveOrUpdateRetailerCustomerRate(final RetailerCustomerRate retailerCustomerRate) {
-        retailerDao.saveOrUpdateRetailerCustomerRate(retailerCustomerRate);
+    public RetailerCustomerRate saveOrUpdateRetailerCustomerRate(final RetailerCustomerRate retailerCustomerRate) {
+        return retailerDao.saveOrUpdateRetailerCustomerRate(retailerCustomerRate);
     }
 
     public void deleteRetailerCustomerRate(final RetailerCustomerRate retailerCustomerRate) {
         retailerDao.deleteRetailerCustomerRate(retailerCustomerRate);
     }
 
-    public void saveOrUpdateRetailerCustomerComment(final RetailerCustomerComment retailerCustomerComment) {
-        retailerDao.saveOrUpdateRetailerCustomerComment(retailerCustomerComment);
+    public RetailerCustomerComment saveOrUpdateRetailerCustomerComment(final RetailerCustomerComment retailerCustomerComment) {
+        return retailerDao.saveOrUpdateRetailerCustomerComment(retailerCustomerComment);
     }
 
     public void deleteRetailerCustomerComment(final RetailerCustomerComment retailerCustomerComment) {
@@ -196,8 +196,8 @@ public class RetailerServiceImpl implements RetailerService {
         return retailerDao.findStoresByRetailerCode(retailerCode, params);
     }
 
-    public void saveOrUpdateStore(final Store store) {
-        retailerDao.saveOrUpdateStore(store);
+    public Store saveOrUpdateStore(final Store store) {
+        return retailerDao.saveOrUpdateStore(store);
     }
 
     public void deleteStore(final Store store) {

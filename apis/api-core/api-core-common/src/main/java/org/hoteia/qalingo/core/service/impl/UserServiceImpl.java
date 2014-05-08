@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -54,8 +54,8 @@ public class UserServiceImpl implements UserService {
 		return userDao.findUsers(params);
 	}
 
-	public void saveOrUpdateUser(User user) {
-		userDao.saveOrUpdateUser(user);
+	public User saveOrUpdateUser(User user) {
+	    return userDao.saveOrUpdateUser(user);
 	}
 
 	public void deleteUser(User user) {
@@ -82,8 +82,8 @@ public class UserServiceImpl implements UserService {
         return userDao.findCompanies(params);
     }
 
-    public void saveOrUpdateCompany(Company company) {
-        userDao.saveOrUpdateCompany(company);
+    public Company saveOrUpdateCompany(Company company) {
+        return userDao.saveOrUpdateCompany(company);
     }
 
     public void deleteCompany(Company company) {

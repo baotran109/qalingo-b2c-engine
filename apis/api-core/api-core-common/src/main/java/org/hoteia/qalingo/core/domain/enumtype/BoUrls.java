@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.domain.enumtype;
 
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +76,8 @@ public enum BoUrls {
 
     GET_CATALOG_AJAX(BoUrls.GET_CATALOG_AJAX_URL, BoUrls.GET_CATALOG_AJAX_KEY, null, false),
     GET_PRODUCT_LIST_AJAX(BoUrls.GET_PRODUCT_LIST_AJAX_URL, BoUrls.GET_PRODUCT_LIST_AJAX_KEY, null, false),
+    GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX(BoUrls.GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_URL, BoUrls.GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_KEY, null, false),
+    SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX(BoUrls.SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_URL, BoUrls.SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_KEY, null, false),
 
     RETAILER_LIST(BoUrls.RETAILER_LIST_URL, BoUrls.RETAILER_LIST_KEY, BoUrls.RETAILER_LIST_VELOCITY_PAGE, true),
     RETAILER_DETAILS(BoUrls.RETAILER_DETAILS_URL, BoUrls.RETAILER_DETAILS_KEY, BoUrls.RETAILER_DETAILS_VELOCITY_PAGE, true),
@@ -95,18 +106,20 @@ public enum BoUrls {
 
     MASTER_CATALOG(BoUrls.MASTER_CATALOG_URL, BoUrls.MASTER_CATALOG_KEY, BoUrls.MASTER_CATALOG_VELOCITY_PAGE, true),
     MASTER_CATEGORY_DETAILS(BoUrls.MASTER_CATEGORY_DETAILS_URL, BoUrls.MASTER_CATEGORY_DETAILS_KEY, BoUrls.MASTER_CATEGORY_DETAILS_VELOCITY_PAGE, true),
+    MASTER_CATEGORY_ADD(BoUrls.MASTER_CATEGORY_EDIT_URL, BoUrls.MASTER_CATEGORY_ADD_KEY, BoUrls.MASTER_CATEGORY_EDIT_VELOCITY_PAGE, true),
     MASTER_CATEGORY_EDIT(BoUrls.MASTER_CATEGORY_EDIT_URL, BoUrls.MASTER_CATEGORY_EDIT_KEY, BoUrls.MASTER_CATEGORY_EDIT_VELOCITY_PAGE, true),
-    MASTER_CATEGORY_ADD(BoUrls.MASTER_CATEGORY_ADD_URL, BoUrls.MASTER_CATEGORY_ADD_KEY, BoUrls.MASTER_CATEGORY_ADD_VELOCITY_PAGE, true),
 
     VIRTUAL_CATALOG(BoUrls.VIRTUAL_CATALOG_URL, BoUrls.VIRTUAL_CATALOG_KEY, BoUrls.VIRTUAL_CATALOG_VELOCITY_PAGE, true),
     VIRTUAL_CATEGORY_DETAILS(BoUrls.VIRTUAL_CATEGORY_DETAILS_URL, BoUrls.VIRTUAL_CATEGORY_DETAILS_KEY, BoUrls.VIRTUAL_CATEGORY_DETAILS_VELOCITY_PAGE, true),
+    VIRTUAL_CATEGORY_ADD(BoUrls.VIRTUAL_CATEGORY_EDIT_URL, BoUrls.VIRTUAL_CATEGORY_ADD_KEY, BoUrls.VIRTUAL_CATEGORY_EDIT_VELOCITY_PAGE, true),
     VIRTUAL_CATEGORY_EDIT(BoUrls.VIRTUAL_CATEGORY_EDIT_URL, BoUrls.VIRTUAL_CATEGORY_EDIT_KEY, BoUrls.VIRTUAL_CATEGORY_EDIT_VELOCITY_PAGE, true),
-    VIRTUAL_CATEGORY_ADD(BoUrls.VIRTUAL_CATEGORY_ADD_URL, BoUrls.VIRTUAL_CATEGORY_ADD_KEY, BoUrls.VIRTUAL_CATEGORY_ADD_VELOCITY_PAGE, true),
 
     PRODUCT_MARKETING_DETAILS(BoUrls.PRODUCT_MARKETING_DETAILS_URL, BoUrls.PRODUCT_MARKETING_DETAILS_KEY, BoUrls.PRODUCT_MARKETING_DETAILS_VELOCITY_PAGE, true),
+    PRODUCT_MARKETING_ADD(BoUrls.PRODUCT_MARKETING_EDIT_URL, BoUrls.PRODUCT_MARKETING_ADD_KEY, BoUrls.PRODUCT_MARKETING_EDIT_VELOCITY_PAGE, true),
     PRODUCT_MARKETING_EDIT(BoUrls.PRODUCT_MARKETING_EDIT_URL, BoUrls.PRODUCT_MARKETING_EDIT_KEY, BoUrls.PRODUCT_MARKETING_EDIT_VELOCITY_PAGE, true),
 
     PRODUCT_SKU_DETAILS(BoUrls.PRODUCT_SKU_DETAILS_URL, BoUrls.PRODUCT_SKU_DETAILS_KEY, BoUrls.PRODUCT_SKU_DETAILS_VELOCITY_PAGE, true),
+    PRODUCT_SKU_ADD(BoUrls.PRODUCT_SKU_EDIT_URL, BoUrls.PRODUCT_SKU_ADD_KEY, BoUrls.PRODUCT_SKU_EDIT_VELOCITY_PAGE, true),
     PRODUCT_SKU_EDIT(BoUrls.PRODUCT_SKU_EDIT_URL, BoUrls.PRODUCT_SKU_EDIT_KEY, BoUrls.PRODUCT_SKU_EDIT_VELOCITY_PAGE, true),
 
     ASSET_DETAILS(BoUrls.ASSET_DETAILS_URL, BoUrls.ASSET_DETAILS_KEY, BoUrls.ASSET_DETAILS_VELOCITY_PAGE, true),
@@ -327,7 +340,13 @@ public enum BoUrls {
 
     public static final String GET_PRODUCT_LIST_AJAX_KEY        = "get-product-list-ajax";
     public static final String GET_PRODUCT_LIST_AJAX_URL        = "/**/get-product-list.ajax";
-    
+
+    public static final String GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_KEY   = "get-product-list-for-catalog-category-ajax";
+    public static final String GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_URL   = "/**/get-product-list-for-catalog-category-ajax.ajax";
+
+    public static final String SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_KEY   = "set-product-list-for-catalog-category-ajax";
+    public static final String SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX_URL   = "/**/set-product-list-for-catalog-category-ajax.ajax";
+
 	// CUSTOMER
 	public static final String CUSTOMER_LIST_KEY           = "customer-list";
 	public static final String CUSTOMER_LIST_URL           = "/**/customer-list.html";
@@ -391,13 +410,11 @@ public enum BoUrls {
     public static final String MASTER_CATEGORY_DETAILS_URL              = "/**/catalog-master-category-details.html";
     public static final String MASTER_CATEGORY_DETAILS_VELOCITY_PAGE    = "catalog/catalog-category-details";
 
+    public static final String MASTER_CATEGORY_ADD_KEY              = "master-category-add";
+    
     public static final String MASTER_CATEGORY_EDIT_KEY              = "master-category-edit";
     public static final String MASTER_CATEGORY_EDIT_URL              = "/**/catalog-master-category-edit.html";
     public static final String MASTER_CATEGORY_EDIT_VELOCITY_PAGE    = "catalog/catalog-category-edit";
-
-    public static final String MASTER_CATEGORY_ADD_KEY              = "master-category-add";
-    public static final String MASTER_CATEGORY_ADD_URL              = "/**/add-master-catalog-category.html";
-    public static final String MASTER_CATEGORY_ADD_VELOCITY_PAGE    = "catalog/catalog-category-edit";
 
 	public static final String VIRTUAL_CATALOG_KEY				= "virtual-catalog";
 	public static final String VIRTUAL_CATALOG_URL				= "/**/virtual-catalog.html";
@@ -407,17 +424,17 @@ public enum BoUrls {
 	public static final String VIRTUAL_CATEGORY_DETAILS_URL				= "/**/catalog-virtual-category-details.html";
 	public static final String VIRTUAL_CATEGORY_DETAILS_VELOCITY_PAGE	= "catalog/catalog-category-details";
 
+    public static final String VIRTUAL_CATEGORY_ADD_KEY            = "virtual-category-add";
+
     public static final String VIRTUAL_CATEGORY_EDIT_KEY            = "virtual-category-edit";
     public static final String VIRTUAL_CATEGORY_EDIT_URL            = "/**/catalog-virtual-category-edit.html";
     public static final String VIRTUAL_CATEGORY_EDIT_VELOCITY_PAGE  = "catalog/catalog-category-edit";
 
-    public static final String VIRTUAL_CATEGORY_ADD_KEY            = "virtual-category-add";
-    public static final String VIRTUAL_CATEGORY_ADD_URL            = "/**/add-virtual-catalog-category.html";
-    public static final String VIRTUAL_CATEGORY_ADD_VELOCITY_PAGE  = "catalog/catalog-category-edit";
-
     public static final String PRODUCT_MARKETING_DETAILS_KEY            = "product-marketing-details";
     public static final String PRODUCT_MARKETING_DETAILS_URL            = "/**/product-marketing-details.html";
     public static final String PRODUCT_MARKETING_DETAILS_VELOCITY_PAGE  = "catalog/product-marketing-details";
+
+    public static final String PRODUCT_MARKETING_ADD_KEY            = "product-marketing-add";
 
     public static final String PRODUCT_MARKETING_EDIT_KEY            = "product-marketing-edit";
     public static final String PRODUCT_MARKETING_EDIT_URL            = "/**/product-marketing-edit.html";
@@ -427,6 +444,8 @@ public enum BoUrls {
     public static final String PRODUCT_SKU_DETAILS_URL            = "/**/product-sku-details.html";
     public static final String PRODUCT_SKU_DETAILS_VELOCITY_PAGE  = "catalog/product-sku-details";
 
+    public static final String PRODUCT_SKU_ADD_KEY            = "product-sku-add";
+    
     public static final String PRODUCT_SKU_EDIT_KEY            = "product-sku-edit";
     public static final String PRODUCT_SKU_EDIT_URL            = "/**/product-sku-edit.html";
     public static final String PRODUCT_SKU_EDIT_VELOCITY_PAGE  = "catalog/product-sku-edit";

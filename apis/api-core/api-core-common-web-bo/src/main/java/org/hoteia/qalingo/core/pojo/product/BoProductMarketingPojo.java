@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -22,19 +22,19 @@ import org.hoteia.qalingo.core.pojo.product.ProductMarketingPojo;
  */
 public class BoProductMarketingPojo extends ProductMarketingPojo {
 	
-	private String detailsUrl;
+    private String addUrl;
 	private String editUrl;
 
 	public BoProductMarketingPojo() {
 	}
 	
-	public String getDetailsUrl() {
-		return detailsUrl;
-	}
+	public String getAddUrl() {
+        return addUrl;
+    }
 	
-	public void setDetailsUrl(String detailsUrl) {
-		this.detailsUrl = detailsUrl;
-	}
+	public void setAddUrl(String addUrl) {
+        this.addUrl = addUrl;
+    }
 	
 	public String getEditUrl() {
 		return editUrl;

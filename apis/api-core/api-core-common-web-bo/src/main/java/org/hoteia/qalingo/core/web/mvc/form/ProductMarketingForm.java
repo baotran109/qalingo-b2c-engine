@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -21,8 +21,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class ProductMarketingForm {
 	
     private String id;
+    private String code;
 	private String name;
-	private String code;
 	private String description;
     
 	private Map<String, String> globalAttributes = new HashMap<String, String>();
@@ -39,7 +39,19 @@ public class ProductMarketingForm {
 		this.id = id;
 	}
     
-	@NotEmpty(message = "error.form.product.marketing.name.is.empty")
+    @NotEmpty(message = "bo.product_marketing.error_form_code_is_empty")
+    public String getCode() {
+        if(code == null){
+            return "";
+        }
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
+	@NotEmpty(message = "bo.product_marketing.error_form_name_is_empty")
 	public String getName() {
 		if(name == null){
 			return "";
@@ -51,17 +63,6 @@ public class ProductMarketingForm {
 		this.name = name;
 	}
 	
-	public String getCode() {
-		if(code == null){
-			return "";
-		}
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	public String getDescription() {
 		if(description == null){
 			return "";

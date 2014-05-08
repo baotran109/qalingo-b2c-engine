@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -46,7 +46,7 @@ public interface RetailerService {
 
 	List<Retailer> findRetailersByText(Long marketAreaId, Long retailerId, String searchTxt, Object... params);
 
-	void saveOrUpdateRetailer(Retailer retailer);
+	Retailer saveOrUpdateRetailer(Retailer retailer);
 	
 	void deleteRetailer(Retailer retailer);
 	
@@ -56,11 +56,11 @@ public interface RetailerService {
 	
     // RETAILER COMMENT/RATE
 	
-	void saveOrUpdateRetailerCustomerRate(RetailerCustomerRate retailerCustomerRate);
+	RetailerCustomerRate saveOrUpdateRetailerCustomerRate(RetailerCustomerRate retailerCustomerRate);
 	
 	void deleteRetailerCustomerRate(RetailerCustomerRate retailerCustomerRate);
 	
-	void saveOrUpdateRetailerCustomerComment(RetailerCustomerComment retailerCustomerComment);
+	RetailerCustomerComment saveOrUpdateRetailerCustomerComment(RetailerCustomerComment retailerCustomerComment);
 	
 	void deleteRetailerCustomerComment(RetailerCustomerComment retailerCustomerComment);
 	
@@ -78,7 +78,7 @@ public interface RetailerService {
 
     List<Store> findStoresByRetailerCode(String retailerCode, Object... params);
 
-	void saveOrUpdateStore(Store store);
+    Store saveOrUpdateStore(Store store);
 	
 	void deleteStore(Store store);
 

@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -11,6 +11,11 @@ package org.hoteia.qalingo.core.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hoteia.qalingo.core.domain.Asset;
 import org.hoteia.qalingo.core.domain.ProductBrand;
 import org.hoteia.qalingo.core.domain.ProductMarketing;
@@ -33,9 +38,15 @@ public interface ProductDao {
     List<ProductMarketing> findProductMarketingsByBrandId(Long brandId, Object... params);
 
     List<ProductMarketing> findProductMarketingsByBrandCode(String brandCode, Object... params);
-    
-    List<ProductMarketing> findProductMarketingsByCatalogCategoryCode(String categoryCode, Object... params);
-    
+
+    List<ProductMarketing> findProductMarketingsByMasterCatalogCategoryId(Long categoryId, Object... params);
+
+    List<ProductMarketing> findProductMarketingsNotInThisMasterCatalogCategoryId(Long categoryId, Object... params);
+
+    List<ProductMarketing> findProductMarketingsByVirtualCatalogCategoryId(Long categoryId, Object... params);
+
+    List<ProductMarketing> findProductMarketingsNotInThisVirtualCatalogCategoryId(Long categoryId, Object... params);
+
     ProductMarketing saveOrUpdateProductMarketing(ProductMarketing productMarketing);
 
 	void deleteProductMarketing(ProductMarketing productMarketing);
@@ -44,7 +55,7 @@ public interface ProductDao {
 
     List<ProductMarketingCustomerRate> findProductMarketingCustomerRatesByProductCode(Long productMarketingId, String type, Object... params);
     
-    Float calculateProductMarketingCustomerRatesByProductCode(Long productMarketingId);
+    Float calculateProductMarketingCustomerRatesByProductId(Long productMarketingId);
     
     List<ProductMarketingCustomerComment> findProductMarketingCustomerCommentsByProductCode(Long productMarketingId, Object... params);
     
@@ -60,8 +71,6 @@ public interface ProductDao {
 	
 	Asset getProductMarketingAssetById(Long productMarketingId, Object... params);
 
-	Asset getProductMarketingAssetByCode(String assetCode, Object... params);
-
 	Asset saveOrUpdateProductMarketingAsset(Asset productMarketingAsset);
 	
 	void deleteProductMarketingAsset(Asset productMarketingAsset);
@@ -75,6 +84,14 @@ public interface ProductDao {
     List<ProductSku> findProductSkusByproductMarketingId(Long productMarkettingId, Object... params);
     
     List<ProductSku> findProductSkus(String text, Object... params);
+
+    List<ProductSku> findProductSkusByMasterCatalogCategoryId(Long categoryId, Object... params);
+    
+    List<ProductSku> findProductSkusNotInThisMasterCatalogCategoryId(Long categoryId, Object... params);
+
+    List<ProductSku> findProductSkusByVirtualCatalogCategoryId(Long categoryId, Object... params);
+    
+    List<ProductSku> findProductSkusNotInThisVirtualCatalogCategoryId(Long categoryId, Object... params);
     
     ProductSku saveOrUpdateProductSku(ProductSku productSku);
 
@@ -83,8 +100,6 @@ public interface ProductDao {
    // PRODUCT SKU ASSET
     
     Asset getProductSkuAssetById(Long productSkuId, Object... params);
-
-    Asset getProductSkuAssetByCode(String assetCode, Object... params);
 
     Asset saveOrUpdateProductSkuAsset(Asset productSkuAsset);
     

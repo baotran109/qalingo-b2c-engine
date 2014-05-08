@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -113,7 +113,7 @@ public class BackofficeUrlServiceImpl extends AbstractUrlServiceImpl implements 
                         break;
                     } else if (param instanceof Asset) {
                         Asset asset = (Asset) param;
-                        getParams.put(RequestConstants.REQUEST_PARAMETER_ASSET_CODE, handleParamValue(asset.getCode().toString()));
+                        getParams.put(RequestConstants.REQUEST_PARAMETER_ASSET_ID, handleParamValue(asset.getId().toString()));
                         break;
                     } else if (param instanceof AbstractRuleReferential) {
                         AbstractRuleReferential rule = (AbstractRuleReferential) param;

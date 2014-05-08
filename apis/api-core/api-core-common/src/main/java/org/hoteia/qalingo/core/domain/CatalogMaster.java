@@ -1,16 +1,22 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
 package org.hoteia.qalingo.core.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -21,7 +27,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -30,9 +35,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
+import org.hibernate.Hibernate;
+
 @Entity
 @Table(name="TECO_CATALOG_MASTER", uniqueConstraints = {@UniqueConstraint(columnNames= {"CODE"})})
-public class CatalogMaster extends AbstractEntity {
+public class CatalogMaster extends AbstractCatalog<CatalogCategoryMaster> {
 
 	/**
 	 * Generated UID
@@ -61,18 +68,14 @@ public class CatalogMaster extends AbstractEntity {
 	@Column(name="IS_DEFAULT", nullable=false, columnDefinition="tinyint(1) default 0")
 	private boolean isDefault;
 	
-	@OneToMany(
-	        targetEntity=org.hoteia.qalingo.core.domain.CatalogCategoryMaster.class,
-       		fetch = FetchType.LAZY,
-	        cascade={CascadeType.PERSIST, CascadeType.MERGE}
-	    )
-    @JoinTable(
-	        name="TECO_CATALOG_MASTER_CATEGORY_MASTER_REL",
-	        joinColumns=@JoinColumn(name="MASTER_CATALOG_ID"),
-	        inverseJoinColumns=@JoinColumn(name="MASTER_CATEGORY_ID")
-	    )
-	private Set<CatalogCategoryMaster> catalogCategories = new HashSet<CatalogCategoryMaster>(); 
+//    @OneToMany(targetEntity = org.hoteia.qalingo.core.domain.CatalogCategoryMaster.class, fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//    @JoinTable(name = "TECO_CATALOG_MASTER_CATEGORY_MASTER_REL", joinColumns = @JoinColumn(name = "MASTER_CATALOG_ID"), inverseJoinColumns = @JoinColumn(name = "MASTER_CATEGORY_ID"))
+//    private Set<CatalogCategoryMaster> catalogCategories = new HashSet<CatalogCategoryMaster>();
 	
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @JoinColumn(name = "MASTER_CATALOG_ID")
+    private Set<CatalogCategoryMaster> catalogCategories = new HashSet<CatalogCategoryMaster>();
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE_CREATE")
     private Date dateCreate;
@@ -136,6 +139,50 @@ public class CatalogMaster extends AbstractEntity {
 		return catalogCategories;
 	}
 	
+    public List<CatalogCategoryMaster> getSortedAllCatalogCategories() {
+        List<CatalogCategoryMaster> sortedCatalogCategories = null;
+        if (catalogCategories != null 
+                && Hibernate.isInitialized(catalogCategories)) {
+            sortedCatalogCategories = new LinkedList<CatalogCategoryMaster>(catalogCategories);
+            Collections.sort(sortedCatalogCategories, new Comparator<CatalogCategoryMaster>() {
+                @Override
+                public int compare(CatalogCategoryMaster o1, CatalogCategoryMaster o2) {
+                    if (o1 != null && o1.getRanking() != null && o2 != null && o2.getRanking() != null) {
+                        return o1.getRanking().compareTo(o2.getRanking());
+                    }
+                    return 0;
+                }
+            });
+        }
+        return sortedCatalogCategories;
+    }
+    
+    public List<CatalogCategoryMaster> getSortedRootCatalogCategories() {
+        List<CatalogCategoryMaster> rootCatalogCategories = null;
+        List<CatalogCategoryMaster> sortedCatalogCategories = null;
+        if (catalogCategories != null 
+                && Hibernate.isInitialized(catalogCategories)) {
+            rootCatalogCategories = new ArrayList<CatalogCategoryMaster>();
+            for (Iterator<CatalogCategoryMaster> iterator = catalogCategories.iterator(); iterator.hasNext();) {
+                CatalogCategoryMaster catalogCategoryMaster = (CatalogCategoryMaster) iterator.next();
+                if(catalogCategoryMaster.isRoot()){
+                    rootCatalogCategories.add(catalogCategoryMaster);
+                }
+            }
+            sortedCatalogCategories = new LinkedList<CatalogCategoryMaster>(rootCatalogCategories);
+            Collections.sort(sortedCatalogCategories, new Comparator<CatalogCategoryMaster>() {
+                @Override
+                public int compare(CatalogCategoryMaster o1, CatalogCategoryMaster o2) {
+                    if (o1 != null && o1.getRanking() != null && o2 != null && o2.getRanking() != null) {
+                        return o1.getRanking().compareTo(o2.getRanking());
+                    }
+                    return 0;
+                }
+            });
+        }
+        return sortedCatalogCategories;
+    }
+    
 	public void setCatalogCategories(Set<CatalogCategoryMaster> catalogCategories) {
 		this.catalogCategories = catalogCategories;
 	}

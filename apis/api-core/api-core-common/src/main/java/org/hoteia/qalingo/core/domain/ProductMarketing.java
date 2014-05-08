@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
@@ -82,7 +83,7 @@ public class ProductMarketing extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "PRODUCT_MARKETING_ID")
-    private Set<ProductMarketingAttribute> productMarketingAttributes = new HashSet<ProductMarketingAttribute>();
+    private Set<ProductMarketingAttribute> attributes = new HashSet<ProductMarketingAttribute>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "PRODUCT_MARKETING_ID")
@@ -96,6 +97,9 @@ public class ProductMarketing extends AbstractEntity {
     @JoinColumn(name = "PRODUCT_MARKETING_ID")
     private Set<Asset> assets = new HashSet<Asset>();
 
+    @Transient
+    private int ranking;
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE_CREATE")
     private Date dateCreate;
@@ -139,21 +143,21 @@ public class ProductMarketing extends AbstractEntity {
 		this.name = name;
 	}
 	
-	public boolean isDefault() {
-		return isDefault;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
-	}
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
 
 	public ProductBrand getProductBrand() {
 		return productBrand;
@@ -171,20 +175,20 @@ public class ProductMarketing extends AbstractEntity {
 		this.productMarketingType = productMargetingType;
 	}
 	
-	public Set<ProductMarketingAttribute> getProductMarketingAttributes() {
-        return productMarketingAttributes;
+	public Set<ProductMarketingAttribute> getAttributes() {
+        return attributes;
     }
 	
-	public void setProductMarketingAttributes(Set<ProductMarketingAttribute> productMarketingAttributes) {
-        this.productMarketingAttributes = productMarketingAttributes;
+	public void setAttributes(Set<ProductMarketingAttribute> attributes) {
+        this.attributes = attributes;
     }
 	
-	public List<ProductMarketingAttribute> getProductMarketingGlobalAttributes() {
+	public List<ProductMarketingAttribute> getGlobalAttributes() {
         List<ProductMarketingAttribute> productMarketingGlobalAttributes = null;
-        if (productMarketingAttributes != null
-                && Hibernate.isInitialized(productMarketingAttributes)) {
+        if (attributes != null
+                && Hibernate.isInitialized(attributes)) {
             productMarketingGlobalAttributes = new ArrayList<ProductMarketingAttribute>();
-            for (Iterator<ProductMarketingAttribute> iterator = productMarketingAttributes.iterator(); iterator.hasNext();) {
+            for (Iterator<ProductMarketingAttribute> iterator = attributes.iterator(); iterator.hasNext();) {
                 ProductMarketingAttribute attribute = (ProductMarketingAttribute) iterator.next();
                 AttributeDefinition attributeDefinition = attribute.getAttributeDefinition();
                 if (attributeDefinition != null 
@@ -196,12 +200,12 @@ public class ProductMarketing extends AbstractEntity {
         return productMarketingGlobalAttributes;
 	}
 
-	public List<ProductMarketingAttribute> getProductMarketingMarketAreaAttributes(Long marketAreaId) {
+	public List<ProductMarketingAttribute> getMarketAreaAttributes(Long marketAreaId) {
         List<ProductMarketingAttribute> productMarketingMarketAreaAttributes = null;
-        if (productMarketingAttributes != null
-                && Hibernate.isInitialized(productMarketingAttributes)) {
+        if (attributes != null
+                && Hibernate.isInitialized(attributes)) {
             productMarketingMarketAreaAttributes = new ArrayList<ProductMarketingAttribute>();
-            for (Iterator<ProductMarketingAttribute> iterator = productMarketingAttributes.iterator(); iterator.hasNext();) {
+            for (Iterator<ProductMarketingAttribute> iterator = attributes.iterator(); iterator.hasNext();) {
                 ProductMarketingAttribute attribute = (ProductMarketingAttribute) iterator.next();
                 AttributeDefinition attributeDefinition = attribute.getAttributeDefinition();
                 if (attributeDefinition != null 
@@ -233,8 +237,19 @@ public class ProductMarketing extends AbstractEntity {
 				defaultProductSku = (ProductSku) iterator.next();
 			}
 		}
-		
 		return defaultProductSku;
+	}
+	
+	public List<String> getSkuCodes() {
+        List<String> skuCodes = new ArrayList<String>();
+        if(productSkus != null
+                && Hibernate.isInitialized(productSkus)){
+            for (Iterator<ProductSku> iterator = getProductSkus().iterator(); iterator.hasNext();) {
+                ProductSku sku = (ProductSku) iterator.next();
+                skuCodes.add(sku.getCode());
+            }
+        }
+        return skuCodes;
 	}
 	
 	public void setProductSkus(Set<ProductSku> productSkus) {
@@ -289,30 +304,38 @@ public class ProductMarketing extends AbstractEntity {
         return assetsByMarketArea;
 	}
 	
-	public CatalogCategoryVirtual getDefaultCatalogCategory() {
-	    if(productSkus != null
-                && Hibernate.isInitialized(productSkus)){
-            for (Iterator<ProductSku> iterator = productSkus.iterator(); iterator.hasNext();) {
-                ProductSku productSku = (ProductSku) iterator.next();
-                if(productSku.isDefault()){
-                    if(productSku.getDefaultCatalogCategory() != null
-                            && Hibernate.isInitialized(productSku.getDefaultCatalogCategory())){
-                        // DEFAULT CATEGORY FOR THE DEFAULT SKU - BEST SOLUTION
-                        return productSku.getDefaultCatalogCategory();
-                    }
-                }
-            }
-            // NO DEFAULT CATEGORY FOR THE DEFAULT SKU - RETURN A FALLBACK VALUE
-            for (Iterator<ProductSku> iterator = productSkus.iterator(); iterator.hasNext();) {
-                ProductSku productSku = (ProductSku) iterator.next();
-                if(productSku.getDefaultCatalogCategory() != null
-                        && Hibernate.isInitialized(productSku.getDefaultCatalogCategory())){
-                    // DEFAULT CATEGORY FOR THE DEFAULT SKU - BEST SOLUTION
-                    return productSku.getDefaultCatalogCategory();
-                }
-            }
-	    }
-        return null;
+//	public CatalogCategoryVirtual getDefaultCatalogCategory() {
+//	    if(productSkus != null
+//                && Hibernate.isInitialized(productSkus)){
+//            for (Iterator<ProductSku> iterator = productSkus.iterator(); iterator.hasNext();) {
+//                ProductSku productSku = (ProductSku) iterator.next();
+//                if(productSku.isDefault()){
+//                    if(productSku.getDefaultCatalogCategory() != null
+//                            && Hibernate.isInitialized(productSku.getDefaultCatalogCategory())){
+//                        // DEFAULT CATEGORY FOR THE DEFAULT SKU - BEST SOLUTION
+//                        return productSku.getDefaultCatalogCategory();
+//                    }
+//                }
+//            }
+//            // NO DEFAULT CATEGORY FOR THE DEFAULT SKU - RETURN A FALLBACK VALUE
+//            for (Iterator<ProductSku> iterator = productSkus.iterator(); iterator.hasNext();) {
+//                ProductSku productSku = (ProductSku) iterator.next();
+//                if(productSku.getDefaultCatalogCategory() != null
+//                        && Hibernate.isInitialized(productSku.getDefaultCatalogCategory())){
+//                    // DEFAULT CATEGORY FOR THE DEFAULT SKU - BEST SOLUTION
+//                    return productSku.getDefaultCatalogCategory();
+//                }
+//            }
+//	    }
+//        return null;
+//    }
+	
+	public int getRanking() {
+        return ranking;
+    }
+	
+	public void setRanking(int ranking) {
+        this.ranking = ranking;
     }
 	
 	public Date getDateCreate() {
@@ -349,10 +372,10 @@ public class ProductMarketing extends AbstractEntity {
 		ProductMarketingAttribute productMarketingAttributeToReturn = null;
 
 		// 1: GET THE GLOBAL VALUE
-		ProductMarketingAttribute productMarketingGlobalAttribute = getProductMarketingAttribute(getProductMarketingGlobalAttributes(), attributeCode, marketAreaId, localizationCode);
+		ProductMarketingAttribute productMarketingGlobalAttribute = getProductMarketingAttribute(getGlobalAttributes(), attributeCode, marketAreaId, localizationCode);
 
 		// 2: GET THE MARKET AREA VALUE
-		ProductMarketingAttribute productMarketingMarketAreaAttribute = getProductMarketingAttribute(getProductMarketingMarketAreaAttributes(marketAreaId), attributeCode, marketAreaId, localizationCode);
+		ProductMarketingAttribute productMarketingMarketAreaAttribute = getProductMarketingAttribute(getMarketAreaAttributes(marketAreaId), attributeCode, marketAreaId, localizationCode);
 		
 		if(productMarketingMarketAreaAttribute != null){
 			productMarketingAttributeToReturn = productMarketingMarketAreaAttribute;
@@ -363,22 +386,22 @@ public class ProductMarketing extends AbstractEntity {
 		return productMarketingAttributeToReturn;
 	}
 	
-	private ProductMarketingAttribute getProductMarketingAttribute(List<ProductMarketingAttribute> productMarketingAttributes, String attributeCode, Long marketAreaId, String localizationCode) {
+	private ProductMarketingAttribute getProductMarketingAttribute(List<ProductMarketingAttribute> attributes, String attributeCode, Long marketAreaId, String localizationCode) {
 		ProductMarketingAttribute productMarketingAttributeToReturn = null;
-		List<ProductMarketingAttribute> productMarketingAttributesFilter = new ArrayList<ProductMarketingAttribute>();
-		if(productMarketingAttributes != null) {
-			// GET ALL ProductMarketingAttributes FOR THIS ATTRIBUTE
-			for (Iterator<ProductMarketingAttribute> iterator = productMarketingAttributes.iterator(); iterator.hasNext();) {
+		List<ProductMarketingAttribute> attributesFilter = new ArrayList<ProductMarketingAttribute>();
+		if(attributes != null) {
+			// GET ALL attributes FOR THIS ATTRIBUTE
+			for (Iterator<ProductMarketingAttribute> iterator = attributes.iterator(); iterator.hasNext();) {
 				ProductMarketingAttribute productMarketingAttribute = (ProductMarketingAttribute) iterator.next();
 				AttributeDefinition attributeDefinition = productMarketingAttribute.getAttributeDefinition();
 				if(attributeDefinition != null
 						&& attributeDefinition.getCode().equalsIgnoreCase(attributeCode)) {
-					productMarketingAttributesFilter.add(productMarketingAttribute);
+					attributesFilter.add(productMarketingAttribute);
 				}
 			}
-			// REMOVE ALL ProductMarketingAttributes NOT ON THIS MARKET AREA
+			// REMOVE ALL attributes NOT ON THIS MARKET AREA
 			if(marketAreaId != null) {
-				for (Iterator<ProductMarketingAttribute> iterator = productMarketingAttributesFilter.iterator(); iterator.hasNext();) {
+				for (Iterator<ProductMarketingAttribute> iterator = attributesFilter.iterator(); iterator.hasNext();) {
 					ProductMarketingAttribute productMarketingAttribute = (ProductMarketingAttribute) iterator.next();
 					AttributeDefinition attributeDefinition = productMarketingAttribute.getAttributeDefinition();
 					if(BooleanUtils.negate(attributeDefinition.isGlobal())) {
@@ -389,9 +412,9 @@ public class ProductMarketing extends AbstractEntity {
 					}
 				}
 			}
-			// FINALLY RETAIN ONLY ProductMarketingAttributes FOR THIS LOCALIZATION CODE
+			// FINALLY RETAIN ONLY attributes FOR THIS LOCALIZATION CODE
 			if(StringUtils.isNotEmpty(localizationCode)) {
-				for (Iterator<ProductMarketingAttribute> iterator = productMarketingAttributesFilter.iterator(); iterator.hasNext();) {
+				for (Iterator<ProductMarketingAttribute> iterator = attributesFilter.iterator(); iterator.hasNext();) {
 					ProductMarketingAttribute productMarketingAttribute = (ProductMarketingAttribute) iterator.next();
 					String attributeLocalizationCode = productMarketingAttribute.getLocalizationCode();
 					if(StringUtils.isNotEmpty(attributeLocalizationCode)
@@ -399,11 +422,11 @@ public class ProductMarketing extends AbstractEntity {
 						iterator.remove();
 					}
 				}
-				if(productMarketingAttributesFilter.size() == 0){
+				if(attributesFilter.size() == 0){
 					// TODO : warning ?
 
-					// NOT ANY ProductMarketingAttributes FOR THIS LOCALIZATION CODE - GET A FALLBACK
-					for (Iterator<ProductMarketingAttribute> iterator = productMarketingAttributes.iterator(); iterator.hasNext();) {
+					// NOT ANY attributes FOR THIS LOCALIZATION CODE - GET A FALLBACK
+					for (Iterator<ProductMarketingAttribute> iterator = attributes.iterator(); iterator.hasNext();) {
 						ProductMarketingAttribute productMarketingAttribute = (ProductMarketingAttribute) iterator.next();
 						
 						// TODO : get a default locale code from setting database ?
@@ -416,8 +439,8 @@ public class ProductMarketing extends AbstractEntity {
 			}
 		}
 		
-		if(productMarketingAttributesFilter.size() == 1){
-			productMarketingAttributeToReturn = productMarketingAttributesFilter.get(0);
+		if(attributesFilter.size() == 1){
+			productMarketingAttributeToReturn = attributesFilter.get(0);
 		} else {
 			// TODO : throw error ?
 		}
@@ -441,10 +464,6 @@ public class ProductMarketing extends AbstractEntity {
 		return i18nName;
 	}
 	
-	public Integer getOrder(Long marketAreaId) {
-		return (Integer) getValue(ProductMarketingAttribute.PRODUCT_MARKETING_ATTRIBUTE_ORDER, marketAreaId, null);
-	}
-	
    public Boolean isFeatured(){
        Boolean isFeatured = (Boolean) getValue(ProductMarketingAttribute.PRODUCT_MARKETING_ATTRIBUTE_FEATURED, null, null);
         if (isFeatured == null) {
@@ -453,7 +472,7 @@ public class ProductMarketing extends AbstractEntity {
             return isFeatured;
         }
     }
-
+  
 	// ASSET
    
 	public Asset getDefaultPaskshotImage(String size) {

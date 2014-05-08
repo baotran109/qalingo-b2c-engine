@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -154,10 +154,12 @@ public final class ModelConstants {
     public static final String CART_FORM                    = "cartForm";
     public static final String PAYMENT_FORM                 = "paymentForm";
     public static final String CREATE_ACCOUNT_FORM          = "createAccountForm";
-    public static final String PRODUCT_SKU_FORM             = "productSkuForm";
+    public static final String CATALOG_CATEGORY_FORM        = "catalogCategoryForm";
     public static final String PRODUCT_MARKETING_FORM       = "productMarketingForm";
+    public static final String PRODUCT_SKU_FORM             = "productSkuForm";
     public static final String PRODUCT_COMMENT_FORM         = "productCommentForm";
     public static final String CONTACT_FORM                 = "contactForm";
+    public static final String SEARCH_FORM                  = "searchForm";
 
     // AUTH
     public static final String AUTH_HAS_FAIL        = "authHasFail";

@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -206,8 +206,7 @@ public class ProductCommentController extends AbstractMCommerceController {
 		
 		addSuccessMessage(request, getSpecificMessage(ScopeWebMessage.PRODUCT_MARKETING, "comment_form_success_message",  locale));
 		
-		final String urlRedirect = urlService.generateUrl(FoUrls.PRODUCT_DETAILS, requestUtil.getRequestData(request), 
-														product.getDefaultCatalogCategory(), product, product.getDefaultProductSku());
+		final String urlRedirect = requestUtil.getLastProductDetailsRequestUrl(request);
         return new ModelAndView(new RedirectView(urlRedirect));
 	}
 	

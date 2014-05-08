@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -44,7 +44,7 @@ import org.hoteia.qalingo.core.service.DocumentService;
 import org.hoteia.qalingo.core.service.EngineSettingService;
 import org.hoteia.qalingo.core.service.LocalizationService;
 import org.hoteia.qalingo.core.service.MarketService;
-import org.hoteia.qalingo.core.service.pojo.OrderPojoService;
+import org.hoteia.qalingo.core.service.pojo.OrderPojoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +68,7 @@ public class DocumentServiceImpl implements DocumentService {
     protected CoreMessageSource coreMessageSource;
     
     @Autowired
-    protected OrderPojoService orderPojoService;
+    protected OrderPojoFactory orderPojoService;
     
     // ORDER CONFIRMATION CONFIRMATION
     

@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -49,11 +49,7 @@ public class CatalogCategorySolrServiceImpl extends AbstractSolrService implemen
             throw new IllegalArgumentException("Id cannot be blank or null.");
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Indexing customer " + catalogCategoryMaster.getId());
-            logger.debug("Indexing customer " + catalogCategoryMaster.getCode());
-            logger.debug("Indexing customer " + catalogCategoryMaster.getName());
-            logger.debug("Indexing customer " + catalogCategoryMaster.getDateCreate());
-            logger.debug("Indexing customer " + catalogCategoryMaster.getDateUpdate());
+            logger.debug("Indexing customer " + catalogCategoryMaster.getId() + " : " + catalogCategoryMaster.getCode() + " : " + catalogCategoryMaster.getName());
         }
 
         CatalogCategorySolr categorySolr = new CatalogCategorySolr();

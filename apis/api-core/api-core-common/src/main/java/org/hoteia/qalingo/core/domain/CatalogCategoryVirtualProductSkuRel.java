@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.domain;
 
 import javax.persistence.AssociationOverride;
@@ -19,15 +28,25 @@ public class CatalogCategoryVirtualProductSkuRel extends AbstractEntity {
     /**
      * Generated UID
      */
-    private static final long serialVersionUID = 2322332601183745543L;
+    private static final long serialVersionUID = 4855688011096134933L;
 
     @EmbeddedId
     private CatalogCategoryVirtualProductSkuPk pk;
     
     @Column(name = "RANKING")
     private Integer ranking;
-    
+
+    @Column(name = "IS_DEFAULT_CATEGORY", nullable = false, columnDefinition = "tinyint(1) default 0")
+    private boolean isDefaultCategory;
+
+    @Column(name = "IS_DEFAULT_SKU", nullable = false, columnDefinition = "tinyint(1) default 0")
+    private boolean isDefaultSku;
+
     public CatalogCategoryVirtualProductSkuRel() {
+    }
+    
+    public CatalogCategoryVirtualProductSkuRel(final CatalogCategoryVirtual catalogCategoryVirtual, final ProductSku productSku) {
+        this.pk = new CatalogCategoryVirtualProductSkuPk(catalogCategoryVirtual, productSku);
     }
 
     public CatalogCategoryVirtualProductSkuPk getPk() {
@@ -62,6 +81,22 @@ public class CatalogCategoryVirtualProductSkuRel extends AbstractEntity {
 
     public void setRanking(Integer ranking) {
         this.ranking = ranking;
+    }
+
+    public boolean isDefaultCategory() {
+        return isDefaultCategory;
+    }
+
+    public void setDefaultCategory(boolean isDefaultCategory) {
+        this.isDefaultCategory = isDefaultCategory;
+    }
+
+    public boolean isDefaultSku() {
+        return isDefaultSku;
+    }
+
+    public void setDefaultSku(boolean isDefaultSku) {
+        this.isDefaultSku = isDefaultSku;
     }
 
     @Override

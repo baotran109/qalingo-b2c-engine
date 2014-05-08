@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -163,17 +163,15 @@ public class WarehouseController extends AbstractBusinessBackofficeController {
 
         try {
             // CREATE OR UPDATE WAREHOUSE
-            webBackofficeService.createOrUpdateWarehouse(requestData, warehouse, warehouseForm);
+            Warehouse savedWarehouse = webBackofficeService.createOrUpdateWarehouse(requestData, warehouse, warehouseForm);
             
             if (warehouse == null) {
                 addSuccessMessage(request, getSpecificMessage(ScopeWebMessage.WAREHOUSE, "create_success_message", locale));
-                final String urlRedirect = backofficeUrlService.generateUrl(BoUrls.WAREHOUSE_LIST, requestData);
-                return new ModelAndView(new RedirectView(urlRedirect));
             } else {
                 addSuccessMessage(request, getSpecificMessage(ScopeWebMessage.WAREHOUSE, "update_success_message", locale));
-                final String urlRedirect = backofficeUrlService.generateUrl(BoUrls.WAREHOUSE_DETAILS, requestData, warehouse);
-                return new ModelAndView(new RedirectView(urlRedirect));
             }
+            final String urlRedirect = backofficeUrlService.generateUrl(BoUrls.WAREHOUSE_DETAILS, requestData, savedWarehouse);
+            return new ModelAndView(new RedirectView(urlRedirect));
             
         } catch (Exception e) {
             addMessageError(result, null, "code", "code", getSpecificMessage(ScopeWebMessage.WAREHOUSE, "create_or_update_message", locale));

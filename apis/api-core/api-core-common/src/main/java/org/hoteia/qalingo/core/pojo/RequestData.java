@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.pojo;
 
 import java.io.Serializable;
@@ -7,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.hoteia.qalingo.core.domain.Cart;
+import org.hoteia.qalingo.core.domain.CatalogMaster;
 import org.hoteia.qalingo.core.domain.Company;
 import org.hoteia.qalingo.core.domain.CurrencyReferential;
 import org.hoteia.qalingo.core.domain.Customer;
@@ -110,6 +120,21 @@ public class RequestData implements Serializable {
         this.marketPlace = marketPlace;
     }
 
+    public CatalogMaster getMasterCatalog() {
+        if(marketPlace != null
+                && marketPlace.getMasterCatalog() != null){
+            return marketPlace.getMasterCatalog();
+        }
+        return null;
+    }
+    
+    public String getMasterCatalogCode() {
+        if(getMasterCatalog() != null){
+            return getMasterCatalog().getCode();
+        }
+        return null;
+    }
+    
     public Market getMarket() {
         return market;
     }
@@ -120,6 +145,14 @@ public class RequestData implements Serializable {
 
     public MarketArea getMarketArea() {
         return marketArea;
+    }
+    
+    public String getVirtualCatalogCode() {
+        if(marketArea != null
+                && marketArea.getCatalog() != null){
+            return marketArea.getCatalog().getCode();
+        }
+        return null;
     }
 
     public void setMarketArea(MarketArea marketArea) {

@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.rest.controller;
 
 import java.util.ArrayList;
@@ -22,9 +31,9 @@ import org.hoteia.qalingo.core.pojo.market.MarketPlacePojo;
 import org.hoteia.qalingo.core.pojo.market.MarketPojo;
 import org.hoteia.qalingo.core.pojo.product.ProductMarketingPojo;
 import org.hoteia.qalingo.core.pojo.retailer.RetailerPojo;
-import org.hoteia.qalingo.core.service.pojo.LocalizationPojoService;
-import org.hoteia.qalingo.core.service.pojo.MarketPojoService;
-import org.hoteia.qalingo.core.service.pojo.RetailerPojoService;
+import org.hoteia.qalingo.core.service.pojo.LocalizationPojoFactory;
+import org.hoteia.qalingo.core.service.pojo.MarketPojoFactory;
+import org.hoteia.qalingo.core.service.pojo.RetailerPojoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +43,13 @@ import org.springframework.stereotype.Component;
 public class CmsRestService {
 
     @Autowired
-    private MarketPojoService marketPojoService;
+    private MarketPojoFactory marketPojoService;
 
     @Autowired
-    private RetailerPojoService retailerPojoService;
+    private RetailerPojoFactory retailerPojoService;
 
     @Autowired
-    private LocalizationPojoService localizationPojoService;
+    private LocalizationPojoFactory localizationPojoService;
     
     @GET
     @Path("marketplaces")
@@ -234,7 +243,7 @@ public class CmsRestService {
             selectedMarketArea.setLocalizations(null);
             
             cmsCategories.setMarketArea(selectedMarketArea);
-            List<CatalogCategoryPojo> categories = selectedMarketArea.getCatalog().getSortedCatalogCategories();
+            List<CatalogCategoryPojo> categories = selectedMarketArea.getCatalog().getSortedRootCatalogCategories();
             for (Iterator<CatalogCategoryPojo> iterator = categories.iterator(); iterator.hasNext();) {
                 CatalogCategoryPojo catalogCategoryPojo = (CatalogCategoryPojo) iterator.next();
                 catalogCategoryPojo.setCatalogCategoryGlobalAttributes(null);
@@ -244,7 +253,8 @@ public class CmsRestService {
             cmsCategories.setCatalogCategories(categories);
             
             CatalogPojo catalog = selectedMarketArea.getCatalog();
-            catalog.setSortedCatalogCategories(null);
+            catalog.setSortedRootCatalogCategories(null);
+            catalog.setSortedAllCatalogCategories(null);
             cmsCategories.setCatalog(catalog);
         }
 
@@ -265,7 +275,7 @@ public class CmsRestService {
             
             cmsProducts.setMarketArea(selectedMarketArea);
             
-            List<CatalogCategoryPojo> categories = selectedMarketArea.getCatalog().getSortedCatalogCategories();
+            List<CatalogCategoryPojo> categories = selectedMarketArea.getCatalog().getSortedRootCatalogCategories();
             for (Iterator<CatalogCategoryPojo> iterator = categories.iterator(); iterator.hasNext();) {
                 CatalogCategoryPojo catalogCategoryPojo = (CatalogCategoryPojo) iterator.next();
                 if(catalogCategoryPojo.getCode().equals(categoryCode)){
@@ -283,7 +293,7 @@ public class CmsRestService {
             }
 
             CatalogPojo catalog = selectedMarketArea.getCatalog();
-            catalog.setSortedCatalogCategories(null);
+            catalog.setSortedRootCatalogCategories(null);
             cmsProducts.setCatalog(catalog);
 
         }

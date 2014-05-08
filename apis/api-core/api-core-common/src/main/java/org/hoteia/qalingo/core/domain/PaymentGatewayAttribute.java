@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -45,8 +45,12 @@ public class PaymentGatewayAttribute extends AbstractAttribute {
     @JoinColumn(name="ATTRIBUTE_DEFINITION_ID", insertable = true, updatable = true)
 	private AttributeDefinition attributeDefinition;
 	
-	@Column(name="STRING_VALUE")
-	private String stringValue;
+    @Column(name = "SHORT_STRING_VALUE")
+    private String shortStringValue;
+
+    @Column(name = "LONG_STRING_VALUE")
+    @Lob
+    private String longStringValue;
 	
 	@Column(name="INTEGER_VALUE")
 	private Integer integerValue;
@@ -61,8 +65,11 @@ public class PaymentGatewayAttribute extends AbstractAttribute {
 	@Lob
 	private byte[] blobValue;
 	
-	@Column(name="BOOLEAN_VALUE")
-	private Boolean booleanValue;
+    @Column(name = "BOOLEAN_VALUE")
+    private Boolean booleanValue;
+
+    @Column(name = "LOCALIZATION_CODE")
+    private String localizationCode;
 	
 	@Column(name="MARKET_AREA_ID")
 	private Long marketAreaId;
@@ -94,13 +101,21 @@ public class PaymentGatewayAttribute extends AbstractAttribute {
 		this.attributeDefinition = attributeDefinition;
 	}
 
-	public String getStringValue() {
-		return stringValue;
-	}
-
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public String getShortStringValue() {
+        return shortStringValue;
+    }
+    
+    public void setShortStringValue(String shortStringValue) {
+        this.shortStringValue = shortStringValue;
+    }
+    
+    public String getLongStringValue() {
+        return longStringValue;
+    }
+    
+    public void setLongStringValue(String longStringValue) {
+        this.longStringValue = longStringValue;
+    }
 
 	public Integer getIntegerValue() {
 		return integerValue;
@@ -134,13 +149,21 @@ public class PaymentGatewayAttribute extends AbstractAttribute {
 		this.blobValue = blobValue;
 	}
 
-	public Boolean getBooleanValue() {
-		return booleanValue;
-	}
+    public Boolean getBooleanValue() {
+        return booleanValue;
+    }
+    
+    public void setBooleanValue(Boolean booleanValue) {
+        this.booleanValue = booleanValue;
+    }
 
-	public void setBooleanValue(Boolean booleanValue) {
-		this.booleanValue = booleanValue;
-	}
+    public String getLocalizationCode() {
+        return localizationCode;
+    }
+
+    public void setLocalizationCode(String localizationCode) {
+        this.localizationCode = localizationCode;
+    }
 
 	public Long getMarketAreaId() {
 		return marketAreaId;
@@ -177,7 +200,7 @@ public class PaymentGatewayAttribute extends AbstractAttribute {
 
     @Override
     public String toString() {
-        return "PaymentGatewayAttribute [id=" + id + ", version=" + version + ", stringValue=" + stringValue + ", integerValue=" + integerValue + ", doubleValue=" + doubleValue + ", floatValue="
+        return "PaymentGatewayAttribute [id=" + id + ", version=" + version + ", shortStringValue=" + shortStringValue + ", longStringValue=" + longStringValue + ", integerValue=" + integerValue + ", doubleValue=" + doubleValue + ", floatValue="
                 + floatValue + ", blobValue=" + Arrays.toString(blobValue) + ", booleanValue=" + booleanValue + ", marketAreaId=" + marketAreaId + "]";
     }
 

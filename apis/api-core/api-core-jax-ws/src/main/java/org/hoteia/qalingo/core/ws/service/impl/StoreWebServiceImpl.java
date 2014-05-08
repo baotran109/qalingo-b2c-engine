@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -14,7 +14,7 @@ import javax.jws.WebService;
 import java.util.List;
 
 import org.hoteia.qalingo.core.pojo.store.StorePojo;
-import org.hoteia.qalingo.core.service.pojo.StorePojoService;
+import org.hoteia.qalingo.core.service.pojo.StorePojoFactory;
 import org.hoteia.qalingo.core.ws.service.StoreWebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @WebService(endpointInterface="org.hoteia.qalingo.core.ws.service.StoreWebService")
 public class StoreWebServiceImpl implements StoreWebService {
 
-    @Autowired private StorePojoService storeService;
+    @Autowired private StorePojoFactory storeService;
 
     @Override
     public List<StorePojo> getStores() {

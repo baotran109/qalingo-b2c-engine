@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.pojo.product;
 
 import java.util.ArrayList;
@@ -13,9 +22,9 @@ public class ProductSkuPojo {
 
     private Long id;
     private int version;
+    private String code;
     private String name;
     private String i18nName;
-    private Integer order;
     private Integer width;
     private Integer height;
     private Integer length;
@@ -26,7 +35,7 @@ public class ProductSkuPojo {
     private String priceWithStandardCurrencySign;
     private String description;
     private boolean isDefault;
-    private String code;
+    private int ranking;
     
     private Date dateCreate;
     private Date dateUpdate;
@@ -40,6 +49,8 @@ public class ProductSkuPojo {
     private List<ProductSkuPricePojo> prices = new ArrayList<ProductSkuPricePojo>();
     private List<ProductSkuStockPojo> stocks = new ArrayList<ProductSkuStockPojo>();
     private List<RetailerPojo> retailers = new ArrayList<RetailerPojo>();
+
+    private String detailsUrl;
 
     public Long getId() {
         return id;
@@ -56,6 +67,14 @@ public class ProductSkuPojo {
     public void setVersion(int version) {
         this.version = version;
     }
+    
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getName() {
         return name;
@@ -71,14 +90,6 @@ public class ProductSkuPojo {
     
     public void setI18nName(String i18nName) {
         this.i18nName = i18nName;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
     }
 
     public Integer getWidth() {
@@ -153,20 +164,20 @@ public class ProductSkuPojo {
         this.description = description;
     }
 
+    public int getRanking() {
+        return ranking;
+    }
+    
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
+    }
+    
     public boolean isDefault() {
         return isDefault;
     }
 
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public Date getDateCreate() {
@@ -248,6 +259,14 @@ public class ProductSkuPojo {
 
     public void setRetailers(List<RetailerPojo> retailers) {
         this.retailers = retailers;
+    }
+    
+    public String getDetailsUrl() {
+        return detailsUrl;
+    }
+    
+    public void setDetailsUrl(String detailsUrl) {
+        this.detailsUrl = detailsUrl;
     }
     
 }

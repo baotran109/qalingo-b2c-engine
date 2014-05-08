@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.aop.cache;
 
 import java.lang.reflect.Field;
@@ -177,6 +186,9 @@ public class CacheManagementAspect {
                                             if(methodIt.getName().equals("getCode")){
                                                 codeValue = (String) methodIt.invoke(returnObject);
                                             }
+                                            if(newKey != null && codeValue != null){
+                                                break;
+                                            }
                                         }
                                     } catch (Exception e) {
                                         if(logger.isDebugEnabled()){
@@ -200,6 +212,7 @@ public class CacheManagementAspect {
                                     if(methodIt.getName().equals("getId")){
                                         Long id = (Long) methodIt.invoke(returnObject);
                                         newKey = classTarget.getName() + "_" + id;
+                                        break;
                                     }
                                 }
                                 
@@ -221,11 +234,13 @@ public class CacheManagementAspect {
                                 if (cacheEntityById.isKeyInCache(newKey)) {
                                     Element finalElement = cacheEntityById.get(newKey);
                                     if (finalElement != null && !finalElement.isExpired()) {
-                                        // WE TEST IF THE FETCH PLAN ARE EQUALS
+                                        // WE WILL TEST IF THE FETCH PLAN ARE EQUALS
                                         returnObject = finalElement.getObjectValue();
                                     }
+                                } else {
+                                    // WE RESET THE returnObject WHICH HAS THE LONG VALUE - THIS WILL TRIGGER THE LOAD BY DAO
+                                    returnObject = null;
                                 }
-
                             }
                         }
                     }
@@ -250,6 +265,7 @@ public class CacheManagementAspect {
                                 Long id = (Long) methodIt.invoke(returnObject);
                                 newKey = classTarget.getName() + "_" + id;
                                 value = id;
+                                break;
                             }
                         }
                         if (cacheEntityById != null) {
@@ -319,6 +335,7 @@ public class CacheManagementAspect {
                                                 Long id = (Long) methodIt.invoke(returnObject);
                                                 newKey = classTarget.getName() + "_" + id;
                                                 value = id;
+                                                break;
                                             }
                                         }
                                         if (cacheEntityById != null) {
@@ -332,9 +349,7 @@ public class CacheManagementAspect {
                                     }
                                 }
                             }
-                            
                         }
-                        
                     }
                 }
                 

@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -12,11 +12,12 @@ package org.hoteia.qalingo.core.service;
 import java.util.List;
 
 import org.hoteia.qalingo.core.domain.Asset;
+import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
 import org.hoteia.qalingo.core.domain.ProductBrand;
 import org.hoteia.qalingo.core.domain.ProductMarketing;
-import org.hoteia.qalingo.core.domain.ProductSku;
 import org.hoteia.qalingo.core.domain.ProductMarketingCustomerComment;
 import org.hoteia.qalingo.core.domain.ProductMarketingCustomerRate;
+import org.hoteia.qalingo.core.domain.ProductSku;
 import org.hoteia.qalingo.core.web.mvc.viewbean.CustomerProductRatesViewBean;
 
 public interface ProductService {
@@ -29,19 +30,23 @@ public interface ProductService {
 
 	ProductMarketing getProductMarketingByCode(String productMarketingCode, Object... params);
 	
-	List<ProductMarketing> findProductMarketings(Long marketAreaId, Object... params);
+	CatalogCategoryVirtual getDefaultVirtualCatalogCategory(ProductMarketing productMarketing, List<CatalogCategoryVirtual> catalogCategories, boolean withFallback);
 	
-	List<ProductMarketing> findProductMarketings(Long marketAreaId, String text, Object... params);
+	CatalogCategoryVirtual getDefaultVirtualCatalogCategory(ProductSku productSku, List<CatalogCategoryVirtual> catalogCategories, boolean withFallback);
+	
+	List<ProductMarketing> findProductMarketings(Object... params);
+	
+	List<ProductMarketing> findProductMarketings(String text, Object... params);
 
-    List<ProductMarketing> findProductMarketingsByBrandId(Long marketAreaId, Long brandId, Object... params);
+    List<ProductMarketing> findProductMarketingsByBrandId(Long brandId, Object... params);
 
-    List<ProductMarketing> findProductMarketingsByBrandCode(Long marketAreaId, String brandCode, Object... params);
+    List<ProductMarketing> findProductMarketingsByBrandCode(String brandCode, Object... params);
     
-    List<ProductMarketing> findProductMarketingsByCatalogCategoryCode(Long marketAreaId,String categoryCode, Object... params);
+    List<ProductMarketing> findProductMarketingsByVirtualCatalogCategoryId(Long categoryId, Object... params);
     
-    List<ProductBrand> findProductBrandsByCatalogCategoryCode(String categoryCode, Object... params);
+    List<ProductMarketing> findProductMarketingsNotInThisVirtualCatalogCategoryId(Long categoryId, Object... params);
     
-	void saveOrUpdateProductMarketing(ProductMarketing productMarketing);
+    ProductMarketing saveOrUpdateProductMarketing(ProductMarketing productMarketing);
 	
 	void deleteProductMarketing(ProductMarketing productMarketing);
 
@@ -49,13 +54,13 @@ public interface ProductService {
     
     CustomerProductRatesViewBean getProductMarketingCustomerRateDetails(Long productMarketingId, Object... params);
     
-    CustomerProductRatesViewBean calculateProductMarketingCustomerRatesByProductCode(Long productMarketingId);
+    CustomerProductRatesViewBean calculateProductMarketingCustomerRatesByProductId(Long productMarketingId);
     
-    void saveOrUpdateProductMarketingCustomerRate(ProductMarketingCustomerRate productMarketingCustomerRate);
+    ProductMarketingCustomerRate saveOrUpdateProductMarketingCustomerRate(ProductMarketingCustomerRate productMarketingCustomerRate);
     
     void deleteProductMarketingCustomerRate(ProductMarketingCustomerRate productMarketingCustomerRate);
     
-    void saveOrUpdateProductMarketingCustomerComment(ProductMarketingCustomerComment productMarketingCustomerComment);
+    ProductMarketingCustomerComment saveOrUpdateProductMarketingCustomerComment(ProductMarketingCustomerComment productMarketingCustomerComment);
     
     void deleteProductMarketingCustomerComment(ProductMarketingCustomerComment productMarketingCustomerComment);
     
@@ -65,9 +70,7 @@ public interface ProductService {
     
 	Asset getProductMarketingAssetById(String assetId, Object... params);
 
-	Asset getProductMarketingAssetByCode(String assetCode, Object... params);
-
-	void saveOrUpdateProductMarketingAsset(Asset productMarketingAsset);
+	Asset saveOrUpdateProductMarketingAsset(Asset productMarketingAsset);
 	
 	void deleteProductMarketingAsset(Asset productMarketingAsset);
 
@@ -79,11 +82,21 @@ public interface ProductService {
     
     ProductSku getProductSkuByCode(String skuCode, Object... params);
     
-    List<ProductSku> findProductSkusByproductMarketingId(Long marketAreaId, Long productMarketingId, Object... params);
+    List<ProductSku> findProductSkusByProductMarketingId(Long productMarketingId, Object... params);
     
-    List<ProductSku> findProductSkus(Long marketAreaId, String text, Object... params);
+    List<ProductSku> findProductSkus(String text, Object... params);
 
-    void saveOrUpdateProductSku(ProductSku productSku);
+    List<ProductSku> findProductSkusByMasterCatalogCategoryId(Long categoryId, Object... params);
+
+    List<ProductSku> findProductSkusNotInThisMasterCatalogCategoryId(Long categoryId, Object... params);
+
+    List<ProductSku> findProductSkusByVirtualCatalogCategoryId(Long categoryId, Object... params);
+    
+    List<ProductSku> findProductSkusNotInThisVirtualCatalogCategoryId(Long categoryId, Object... params);
+    
+    List<Long> getProductIds(List<ProductSku> productSkus);
+    
+    ProductSku saveOrUpdateProductSku(ProductSku productSku);
     
     void deleteProductSku(ProductSku productSku);
     
@@ -93,9 +106,7 @@ public interface ProductService {
     
     Asset getProductSkuAssetById(String assetId, Object... params);
 
-    Asset getProductSkuAssetByCode(String assetCode, Object... params);
-
-    void saveOrUpdateProductSkuAsset(Asset productSkuAsset);
+    Asset saveOrUpdateProductSkuAsset(Asset productSkuAsset);
     
     void deleteProductSkuAsset(Asset productSkuAsset);
     
@@ -107,7 +118,9 @@ public interface ProductService {
 
     ProductBrand getProductBrandByCode(Long marketAreaId, String productBrandCode, Object... params);
 
-    void saveOrUpdateProductBrand(ProductBrand productBrand);
+    List<ProductBrand> findProductBrandsByCatalogCategoryCode(String categoryCode, Object... params);
+
+    ProductBrand saveOrUpdateProductBrand(ProductBrand productBrand);
 
     void deleteProductBrand(ProductBrand productBrand);
 

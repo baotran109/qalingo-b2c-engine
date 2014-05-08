@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -137,18 +137,16 @@ public class TaxController extends AbstractBusinessBackofficeController {
 
         try {
             // CREATE OR UPDATE TAX
-            webBackofficeService.createOrUpdateTax(tax, taxForm);
+            Tax savedTax = webBackofficeService.createOrUpdateTax(tax, taxForm);
             
             if (tax == null) {
                 addSuccessMessage(request, getSpecificMessage(ScopeWebMessage.TAX, "create_success_message", locale));
-                final String urlRedirect = backofficeUrlService.generateUrl(BoUrls.TAX_LIST, requestData);
-                return new ModelAndView(new RedirectView(urlRedirect));
             } else {
                 addSuccessMessage(request, getSpecificMessage(ScopeWebMessage.TAX, "update_success_message", locale));
-                final String urlRedirect = backofficeUrlService.generateUrl(BoUrls.TAX_DETAILS, requestData, tax);
-                return new ModelAndView(new RedirectView(urlRedirect));
             }
-            
+            final String urlRedirect = backofficeUrlService.generateUrl(BoUrls.TAX_DETAILS, requestData, savedTax);
+            return new ModelAndView(new RedirectView(urlRedirect));
+
         } catch (Exception e) {
             addMessageError(result, null, "code", "code", getSpecificMessage(ScopeWebMessage.TAX, "create_or_update_message", locale));
             logger.error("Can't save or update Tax:" + taxForm.getId() + "/" + taxForm.getCode(), e);

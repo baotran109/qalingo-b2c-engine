@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.solr;
 
 import java.io.IOException;
@@ -7,6 +16,7 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
+import org.hoteia.qalingo.core.domain.CatalogVirtual;
 import org.hoteia.qalingo.core.domain.MarketArea;
 import org.hoteia.qalingo.core.domain.ProductMarketing;
 import org.hoteia.qalingo.core.domain.ProductSku;
@@ -36,20 +46,29 @@ public class ProductMarketingSolrServiceTest {
 	protected ProductMarketingSolrService productMarketingSolrService; 
 
 	protected ProductMarketing productMarketing;
+    private List<CatalogCategoryVirtual> catalogCategories;
 
 	protected ProductMarketingResponseBean responseBean;
 
+    private CatalogVirtual virtualCatalog;
     private MarketArea marketArea;
     private Retailer retailer;
     
     @Before
     public void setUp() throws Exception {
+        virtualCatalog = new CatalogVirtual();
+        virtualCatalog.setId(new Long("1"));
+        virtualCatalog.setCode("V_CAT_XXX");
+        
         marketArea = new MarketArea();
         marketArea.setId(new Long("1"));
+        marketArea.setCatalog(virtualCatalog);
         
         retailer = new Retailer();
         retailer.setId(new Long("1"));
         
+        catalogCategories = new ArrayList<CatalogCategoryVirtual>();
+
         productMarketing = new ProductMarketing();
         productMarketing.setId(new Long("1"));
         productMarketing.setName("Product Marketing");
@@ -75,7 +94,6 @@ public class ProductMarketingSolrServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testIndexDataWithBlankID() throws SolrServerException, IOException {
         productMarketing.setId(null);
-        List<CatalogCategoryVirtual> catalogCategories = new ArrayList<CatalogCategoryVirtual>();
         productMarketingSolrService.addOrUpdateProductMarketing(productMarketing, catalogCategories, marketArea, retailer);
         logger.debug("--------------->testFirstIndexData()");
     }
@@ -86,7 +104,6 @@ public class ProductMarketingSolrServiceTest {
     @Test
     public void testIndexData() throws SolrServerException, IOException {
         logger.debug("--------------->testIndexData");
-        List<CatalogCategoryVirtual> catalogCategories = new ArrayList<CatalogCategoryVirtual>();
         productMarketingSolrService.addOrUpdateProductMarketing(productMarketing, catalogCategories, marketArea, retailer);
     }
     

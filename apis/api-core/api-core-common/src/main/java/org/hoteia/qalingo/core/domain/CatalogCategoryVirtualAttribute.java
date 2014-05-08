@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -48,8 +48,12 @@ public class CatalogCategoryVirtualAttribute extends AbstractAttribute {
     @JoinColumn(name="ATTRIBUTE_DEFINITION_ID", insertable = true, updatable = true)
 	private AttributeDefinition attributeDefinition;
 	
-	@Column(name="STRING_VALUE")
-	private String stringValue;
+    @Column(name = "SHORT_STRING_VALUE")
+    private String shortStringValue;
+
+    @Column(name = "LONG_STRING_VALUE")
+    @Lob
+    private String longStringValue;
 	
 	@Column(name="INTEGER_VALUE")
 	private Integer integerValue;
@@ -70,14 +74,11 @@ public class CatalogCategoryVirtualAttribute extends AbstractAttribute {
 	@Column(name="LOCALIZATION_CODE")
 	private String localizationCode;
 	
-	@Column(name="IS_GLOBAL", nullable=false, columnDefinition="tinyint(1) default 0")
-	private boolean isGlobal;
-	
-	@Column(name="ORDERING", nullable=false, columnDefinition="int(11) default 0")
-	private int ordering;
-	
-	@Column(name="MARKET_AREA_ID")
-	private Long marketAreaId;
+//	@Column(name="IS_GLOBAL", nullable=false, columnDefinition="tinyint(1) default 0")
+//	private boolean isGlobal;
+//	
+//	@Column(name="ORDERING", nullable=false, columnDefinition="int(11) default 0")
+//	private int ordering;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="START_DATE")
@@ -121,14 +122,21 @@ public class CatalogCategoryVirtualAttribute extends AbstractAttribute {
 	public void setAttributeDefinition(AttributeDefinition attributeDefinition) {
 		this.attributeDefinition = attributeDefinition;
 	}
-
-	public String getStringValue() {
-		return stringValue;
-	}
-
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public String getShortStringValue() {
+        return shortStringValue;
+    }
+    
+    public void setShortStringValue(String shortStringValue) {
+        this.shortStringValue = shortStringValue;
+    }
+    
+    public String getLongStringValue() {
+        return longStringValue;
+    }
+    
+    public void setLongStringValue(String longStringValue) {
+        this.longStringValue = longStringValue;
+    }
 
 	public Integer getIntegerValue() {
 		return integerValue;
@@ -178,30 +186,22 @@ public class CatalogCategoryVirtualAttribute extends AbstractAttribute {
 		this.localizationCode = localizationCode;
 	}
 
-	public boolean isGlobal() {
-		return isGlobal;
-	}
-
-	public void setGlobal(boolean isGlobal) {
-		this.isGlobal = isGlobal;
-	}
-
-	public int getOrdering() {
-		return ordering;
-	}
+//	public boolean isGlobal() {
+//		return isGlobal;
+//	}
+//
+//	public void setGlobal(boolean isGlobal) {
+//		this.isGlobal = isGlobal;
+//	}
+//
+//	public int getOrdering() {
+//		return ordering;
+//	}
+//	
+//	public void setOrdering(int ordering) {
+//		this.ordering = ordering;
+//	}
 	
-	public void setOrdering(int ordering) {
-		this.ordering = ordering;
-	}
-	
-	public Long getMarketAreaId() {
-		return marketAreaId;
-	}
-
-	public void setMarketAreaId(Long marketAreaId) {
-		this.marketAreaId = marketAreaId;
-	}
-
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -232,35 +232,6 @@ public class CatalogCategoryVirtualAttribute extends AbstractAttribute {
 
 	public void setDateUpdate(Date dateUpdate) {
 		this.dateUpdate = dateUpdate;
-	}
-
-	public String getValueAsString() {
-		if(attributeDefinition.getAttributeType() == AttributeDefinition.ATTRIBUTE_TYPE_STRING){
-			if(getStringValue() != null){
-				return getStringValue();
-			}
-		} else if(attributeDefinition.getAttributeType() == AttributeDefinition.ATTRIBUTE_TYPE_DOUBLE){
-			if(getDoubleValue() != null){
-				return getDoubleValue().toString();
-			}
-		} else if(attributeDefinition.getAttributeType() == AttributeDefinition.ATTRIBUTE_TYPE_FLOAT){
-			if(getFloatValue() != null){
-				return getFloatValue().toString();
-			}
-		} else if(attributeDefinition.getAttributeType() == AttributeDefinition.ATTRIBUTE_TYPE_INTEGER){
-			if(getIntegerValue() != null){
-				return getIntegerValue().toString();
-			}
-		} else if(attributeDefinition.getAttributeType() == AttributeDefinition.ATTRIBUTE_TYPE_BLOB){
-			if(getBlobValue() != null){
-				return getBlobValue().toString();
-			}
-		} else if(attributeDefinition.getAttributeType() == AttributeDefinition.ATTRIBUTE_TYPE_BOOLEAN){
-			if(getBooleanValue() != null){
-				return getBooleanValue().toString();
-			}
-		}
-		return null;
 	}
 
     @Override
@@ -296,9 +267,8 @@ public class CatalogCategoryVirtualAttribute extends AbstractAttribute {
 
     @Override
     public String toString() {
-        return "CatalogCategoryVirtualAttribute [id=" + id + ", version=" + version + ", stringValue=" + stringValue + ", integerValue=" + integerValue + ", doubleValue=" + doubleValue
-                + ", floatValue=" + floatValue + ", blobValue=" + Arrays.toString(blobValue) + ", booleanValue=" + booleanValue + ", localizationCode=" + localizationCode + ", isGlobal=" + isGlobal
-                + ", ordering=" + ordering + ", marketAreaId=" + marketAreaId + ", startDate=" + startDate + ", endDate=" + endDate + ", dateCreate=" + dateCreate + ", dateUpdate=" + dateUpdate + "]";
+        return "CatalogCategoryVirtualAttribute [id=" + id + ", version=" + version + ", shortStringValue=" + shortStringValue + ", longStringValue=" + longStringValue + ", integerValue=" + integerValue + ", doubleValue=" + doubleValue
+                + ", floatValue=" + floatValue + ", blobValue=" + Arrays.toString(blobValue) + ", booleanValue=" + booleanValue + ", localizationCode=" + localizationCode + ", startDate=" + startDate + ", endDate=" + endDate + ", dateCreate=" + dateCreate + ", dateUpdate=" + dateUpdate + "]";
     }
 	
 }

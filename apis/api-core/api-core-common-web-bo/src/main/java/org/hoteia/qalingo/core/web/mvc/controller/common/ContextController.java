@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -54,6 +54,18 @@ public class ContextController extends AbstractBackofficeQalingoController {
         url.setMethod("GET");
         context.getUrls().add(url);
 
+        url = new UrlPojo();
+        url.setCode(BoUrls.GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX.name());
+        url.setUrl(backofficeUrlService.generateUrl(BoUrls.GET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX, requestData));
+        url.setMethod("GET");
+        context.getUrls().add(url);
+        
+        url = new UrlPojo();
+        url.setCode(BoUrls.SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX.name());
+        url.setUrl(backofficeUrlService.generateUrl(BoUrls.SET_PRODUCT_LIST_FOR_CATALOG_CATEGORY_AJAX, requestData));
+        url.setMethod("GET");
+        context.getUrls().add(url);
+        
         ObjectMapper mapper = new ObjectMapper();
         try {
             String contextJson = mapper.writeValueAsString(context);

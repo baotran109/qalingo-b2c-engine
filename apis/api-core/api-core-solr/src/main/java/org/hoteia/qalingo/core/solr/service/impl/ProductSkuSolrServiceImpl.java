@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -22,10 +22,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
 import org.hoteia.qalingo.core.domain.MarketArea;
 import org.hoteia.qalingo.core.domain.ProductSku;
 import org.hoteia.qalingo.core.domain.ProductSkuPrice;
 import org.hoteia.qalingo.core.domain.Retailer;
+import org.hoteia.qalingo.core.service.ProductService;
 import org.hoteia.qalingo.core.solr.bean.ProductSkuSolr;
 import org.hoteia.qalingo.core.solr.response.ProductSkuResponseBean;
 import org.hoteia.qalingo.core.solr.service.ProductSkuSolrService;
@@ -44,24 +46,33 @@ public class ProductSkuSolrServiceImpl extends AbstractSolrService implements Pr
     @Autowired
     public SolrServer productSkuSolrServer;
     
+    @Autowired
+    protected ProductService productService;
+    
 	/* (non-Javadoc)
 	 * @see fr.hoteia.qalingo.core.solr.service.ProductSkuSolrService#addOrUpdateProductSku(fr.hoteia.qalingo.core.domain.ProductSku)
 	 */
-    public void addOrUpdateProductSku(final ProductSku productSku, final MarketArea marketArea, final Retailer retailer) throws SolrServerException, IOException {
+    public void addOrUpdateProductSku(final ProductSku productSku, final List<CatalogCategoryVirtual> catalogCategories, final MarketArea marketArea, final Retailer retailer) throws SolrServerException, IOException {
         if (productSku.getId() == null) {
             throw new IllegalArgumentException("Id  cannot be blank or null.");
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Indexing productSku " + productSku.getId());
-            logger.debug("Indexing productSku " + productSku.getName());
-            logger.debug("Indexing productSku " + productSku.getDescription());
-            logger.debug("Indexing productSku " + productSku.getCode());
+            logger.debug("Indexing productSku " + productSku.getId() + " : " + productSku.getCode()+ " : " + productSku.getName());
         }
         ProductSkuSolr productSkuSolr = new ProductSkuSolr();
         productSkuSolr.setId(productSku.getId());
+        productSkuSolr.setCode(productSku.getCode());
         productSkuSolr.setName(productSku.getName());
         productSkuSolr.setDescription(productSku.getDescription());
-        productSkuSolr.setCode(productSku.getCode());
+
+        CatalogCategoryVirtual defaultVirtualCatalogCategory = productService.getDefaultVirtualCatalogCategory(productSku, catalogCategories, true);
+
+        if(defaultVirtualCatalogCategory != null){
+            productSkuSolr.setDefaultCategoryCode(defaultVirtualCatalogCategory.getCode());
+        }
+
+        productSkuSolr.getCatalogCode().add(marketArea.getCatalog().getCode());
+
         ProductSkuPrice productSkuPrice = productSku.getPrice(marketArea.getId(), retailer.getId());
         if(productSkuPrice != null){
             BigDecimal salePrice = productSkuPrice.getSalePrice();

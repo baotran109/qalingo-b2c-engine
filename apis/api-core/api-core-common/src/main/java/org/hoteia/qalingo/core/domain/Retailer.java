@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -38,7 +38,6 @@ import javax.persistence.Version;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.OrderBy;
 import org.hoteia.qalingo.core.Constants;
 
 @Entity
@@ -113,7 +112,6 @@ public class Retailer extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "RETAILER_ID")
-    @OrderBy(clause = "ordering asc")
     private Set<Asset> assets = new HashSet<Asset>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

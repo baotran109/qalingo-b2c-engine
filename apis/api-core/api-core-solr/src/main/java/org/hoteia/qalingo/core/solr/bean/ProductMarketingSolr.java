@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -37,6 +37,9 @@ public class ProductMarketingSolr {
 	@Field
 	private String defaultProductSkuCode;
 
+    @Field
+    private List<String> catalogCode = new ArrayList<String>();
+    
 	@Field
 	private Float price;
 
@@ -47,7 +50,7 @@ public class ProductMarketingSolr {
 	private Date dateUpdate;
 
 	@Field
-	private List<String> catalogCategories;
+	private List<String> catalogCategories = new ArrayList<String>();
 
 	public String getName() {
         return name;
@@ -105,6 +108,14 @@ public class ProductMarketingSolr {
 		this.defaultProductSkuCode = defaultProductSkuCode;
 	}
 
+	public List<String> getCatalogCode() {
+        return catalogCode;
+    }
+	
+	public void setCatalogCode(List<String> catalogCode) {
+        this.catalogCode = catalogCode;
+    }
+	
 	public Float getPrice() {
 		return price;
 	}

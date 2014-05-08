@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -49,11 +49,7 @@ public class CustomerSolrServiceImpl extends AbstractSolrService implements Cust
             throw new IllegalArgumentException("Id  cannot be blank or null.");
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Indexing customer " + customer.getId());
-            logger.debug("Indexing customer " + customer.getFirstname());
-            logger.debug("Indexing customer " + customer.getEmail());
-            logger.debug("Indexing customer " + customer.getGender());
-            logger.debug("Indexing customer " + customer.getTitle());
+            logger.debug("Indexing customer " + customer.getId() + " : " + customer.getCode() + " : " + customer.getFirstname() + " : " + customer.getLastname());
         }
         CustomerSolr customerSolr = new CustomerSolr();
         customerSolr.setId(customer.getId());

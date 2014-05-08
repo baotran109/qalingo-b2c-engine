@@ -1,9 +1,9 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
@@ -117,9 +117,9 @@ public class PaymentGatewayController extends AbstractTechnicalBackofficeControl
             PaymentGatewayViewBean paymentGatewayViewBean = backofficeViewBeanFactory.buildViewBeanPaymentGateway(requestData, paymentGateway);
             request.setAttribute(ModelConstants.PAYMENT_GATEWAY_VIEW_BEAN, paymentGatewayViewBean);
 
-            modelAndView.addObject("availablePaymentGatewayGlobaleAttributeDefinitions", attributeService.findPaymentGatewayGlobalAttributeDefinitions());
-            modelAndView.addObject("availablePaymentGatewayMarketAreaAttributeDefinitions", attributeService.findPaymentGatewayMarketAreaAttributeDefinitions());
-            modelAndView.addObject("availablePaymentGatewayOptions", paymentGatewayService.findPaymentGatewayOptions());
+            modelAndView.addObject("availableGlobaleAttributeDefinitions", attributeService.findPaymentGatewayGlobalAttributeDefinitions());
+            modelAndView.addObject("availableMarketAreaAttributeDefinitions", attributeService.findPaymentGatewayMarketAreaAttributeDefinitions());
+            modelAndView.addObject("availableOptions", paymentGatewayService.findPaymentGatewayOptions());
 
             Object[] params = {paymentGateway.getName() + " (" + paymentGateway.getCode() + ")"};
             initPageTitleAndMainContentTitle(request, modelAndView, BoUrls.PAYMENT_GATEWAY_EDIT.getKey(), params);

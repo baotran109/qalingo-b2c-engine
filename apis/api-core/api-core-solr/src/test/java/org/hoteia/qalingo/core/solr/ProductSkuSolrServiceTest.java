@@ -1,9 +1,22 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.solr;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
+import org.hoteia.qalingo.core.domain.CatalogVirtual;
 import org.hoteia.qalingo.core.domain.MarketArea;
 import org.hoteia.qalingo.core.domain.ProductSku;
 import org.hoteia.qalingo.core.domain.ProductSkuPrice;
@@ -32,20 +45,29 @@ public class ProductSkuSolrServiceTest {
 	protected ProductSkuSolrService productSkuSolrService; 
 
 	protected ProductSku productSku;
+    private List<CatalogCategoryVirtual> catalogCategories;
 
 	protected ProductSkuResponseBean responseBean;
 
+    private CatalogVirtual virtualCatalog;
     private MarketArea marketArea;
     private Retailer retailer;
     
     @Before
     public void setUp() throws Exception {
+        virtualCatalog = new CatalogVirtual();
+        virtualCatalog.setId(new Long("1"));
+        virtualCatalog.setCode("V_CAT_XXX");
+        
         marketArea = new MarketArea();
         marketArea.setId(new Long("1"));
+        marketArea.setCatalog(virtualCatalog);
         
         retailer = new Retailer();
         retailer.setId(new Long("1"));
         
+        catalogCategories = new ArrayList<CatalogCategoryVirtual>();
+
         productSku = new ProductSku();
         productSku.setId(new Long("1"));
         productSku.setDefault(true);
@@ -66,7 +88,7 @@ public class ProductSkuSolrServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testIndexDataWithBlankID() throws SolrServerException, IOException {
         productSku.setId(null);
-        productSkuSolrService.addOrUpdateProductSku(productSku, marketArea, retailer);
+        productSkuSolrService.addOrUpdateProductSku(productSku, catalogCategories, marketArea, retailer);
         logger.debug("--------------->testFirstIndexData()");
     }
     
@@ -81,7 +103,7 @@ public class ProductSkuSolrServiceTest {
         productSku.setName("Product Sku");
         productSku.setDescription("Product Sku ...");
         productSku.setCode("productSku");
-        productSkuSolrService.addOrUpdateProductSku(productSku, marketArea, retailer);
+        productSkuSolrService.addOrUpdateProductSku(productSku, catalogCategories, marketArea, retailer);
     }
     
 	/**

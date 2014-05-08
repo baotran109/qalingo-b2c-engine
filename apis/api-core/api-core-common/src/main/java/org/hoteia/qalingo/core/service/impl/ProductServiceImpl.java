@@ -1,22 +1,23 @@
 /**
  * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
- * under the Apache License Version 2.0 (release version 0.7.0)
+ * under the Apache License Version 2.0 (release version 0.8.0)
  *         http://www.apache.org/licenses/LICENSE-2.0
  *
- *                   Copyright (c) Hoteia, 2012-2013
+ *                   Copyright (c) Hoteia, 2012-2014
  * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
  *
  */
 package org.hoteia.qalingo.core.service.impl;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hoteia.qalingo.core.Constants;
 import org.hoteia.qalingo.core.dao.ProductDao;
 import org.hoteia.qalingo.core.domain.Asset;
+import org.hoteia.qalingo.core.domain.CatalogCategoryVirtual;
+import org.hoteia.qalingo.core.domain.CatalogCategoryVirtualProductSkuRel;
 import org.hoteia.qalingo.core.domain.ProductBrand;
 import org.hoteia.qalingo.core.domain.ProductMarketing;
 import org.hoteia.qalingo.core.domain.ProductMarketingCustomerComment;
@@ -54,76 +55,91 @@ public class ProductServiceImpl implements ProductService {
     public ProductMarketing getProductMarketingByCode(final String productMarketingCode, Object... params) {
         return productDao.getProductMarketingByCode(productMarketingCode, params);
     }
+    
+    public CatalogCategoryVirtual getDefaultVirtualCatalogCategory(final ProductMarketing productMarketing, final List<CatalogCategoryVirtual> catalogCategories, boolean withFallback) {
+        return getDefaultVirtualCatalogCategory(productMarketing.getDefaultProductSku(), catalogCategories, withFallback);
+    }
 
-    public List<ProductMarketing> findProductMarketings(final Long marketAreaId, Object... params) {
+    public CatalogCategoryVirtual getDefaultVirtualCatalogCategory(final ProductSku productSku, final List<CatalogCategoryVirtual> catalogCategories, boolean withFallback) {
+        if(catalogCategories != null){
+            for (Iterator<CatalogCategoryVirtual> iteratorCatalogCategoryVirtual = catalogCategories.iterator(); iteratorCatalogCategoryVirtual.hasNext();) {
+                CatalogCategoryVirtual catalogCategoryVirtual = (CatalogCategoryVirtual) iteratorCatalogCategoryVirtual.next();
+                for (Iterator<CatalogCategoryVirtualProductSkuRel> iteratorCatalogCategoryProductSkuRel = catalogCategoryVirtual.getCatalogCategoryProductSkuRels().iterator(); iteratorCatalogCategoryProductSkuRel.hasNext();) {
+                    CatalogCategoryVirtualProductSkuRel catalogCategoryVirtualProductSkuRel = (CatalogCategoryVirtualProductSkuRel) iteratorCatalogCategoryProductSkuRel.next();
+                    if(productSku.getCode().equals(catalogCategoryVirtualProductSkuRel.getProductSku().getCode()) 
+                            && catalogCategoryVirtualProductSkuRel.isDefaultCategory()){
+                        return catalogCategoryVirtual;
+                    }
+                }
+            }
+            if(withFallback
+                    && catalogCategories.size() > 0){
+                return catalogCategories.iterator().next();
+            }
+        }
+        return null;
+    }
+    
+    public List<ProductMarketing> findProductMarketings(Object... params) {
         List<ProductMarketing> productMarketings = productDao.findProductMarketings(params);
-        return orderProductMarketingList(marketAreaId, productMarketings);
+        return productMarketings;
     }
 
-    public List<ProductMarketing> findProductMarketings(final Long marketAreaId, final String text, Object... params) {
+    public List<ProductMarketing> findProductMarketings(final String text, Object... params) {
         List<ProductMarketing> productMarketings = productDao.findProductMarketings(text, params);
-        return orderProductMarketingList(marketAreaId, productMarketings);
+        return productMarketings;
     }
 
-    public List<ProductMarketing> findProductMarketingsByBrandId(final Long marketAreaId, final Long brandId, Object... params) {
+    public List<ProductMarketing> findProductMarketingsByBrandId(final Long brandId, Object... params) {
         List<ProductMarketing> productMarketings = productDao.findProductMarketingsByBrandId(brandId, params);
-        return orderProductMarketingList(marketAreaId, productMarketings);
+        return productMarketings;
     }
 
-    public List<ProductMarketing> findProductMarketingsByBrandCode(final Long marketAreaId, final String brandCode, Object... params) {
+    public List<ProductMarketing> findProductMarketingsByBrandCode(final String brandCode, Object... params) {
         List<ProductMarketing> productMarketings = productDao.findProductMarketingsByBrandCode(brandCode, params);
-        return orderProductMarketingList(marketAreaId, productMarketings);
+        return productMarketings;
     }
-    public List<ProductMarketing> findProductMarketingsByCatalogCategoryCode(final Long marketAreaId, final String categoryCode, Object... params){
-    	List<ProductMarketing> productMarketings = productDao.findProductMarketingsByCatalogCategoryCode(categoryCode, params);
-    	return orderProductMarketingList(marketAreaId, productMarketings);
+    
+    public List<ProductMarketing> findProductMarketingsNotInThisMasterCatalogCategoryId(final Long categoryId, Object... params){
+        List<ProductMarketing> productMarketings = productDao.findProductMarketingsNotInThisMasterCatalogCategoryId(categoryId, params);
+        return productMarketings;
+    }
+    
+    public List<ProductMarketing> findProductMarketingsByMasterCatalogCategoryId(final Long categoryId, Object... params){
+        List<ProductMarketing> productMarketings = productDao.findProductMarketingsByMasterCatalogCategoryId(categoryId, params);
+        return productMarketings;
+    }
+    
+    public List<ProductMarketing> findProductMarketingsNotInThisVirtualCatalogCategoryId(final Long categoryId, Object... params){
+        List<ProductMarketing> productMarketings = productDao.findProductMarketingsNotInThisVirtualCatalogCategoryId(categoryId, params);
+        return productMarketings;
+    }
+    
+    public List<ProductMarketing> findProductMarketingsByVirtualCatalogCategoryId(final Long categoryId, Object... params){
+    	List<ProductMarketing> productMarketings = productDao.findProductMarketingsByVirtualCatalogCategoryId(categoryId, params);
+    	return productMarketings;
     }
 
-    public void saveOrUpdateProductMarketing(final ProductMarketing productMarketing) {
-        productDao.saveOrUpdateProductMarketing(productMarketing);
+    public ProductMarketing saveOrUpdateProductMarketing(final ProductMarketing productMarketing) {
+        return productDao.saveOrUpdateProductMarketing(productMarketing);
     }
 
     public void deleteProductMarketing(final ProductMarketing productMarketing) {
         productDao.deleteProductMarketing(productMarketing);
     }
 
-    protected List<ProductMarketing> orderProductMarketingList(final Long marketAreaId, final List<ProductMarketing> productMarketings) {
-        if (productMarketings != null) {
-            List<ProductMarketing> sortedObjects = new LinkedList<ProductMarketing>(productMarketings);
-            if (marketAreaId != null) {
-                Collections.sort(sortedObjects, new Comparator<ProductMarketing>() {
-                    @Override
-                    public int compare(ProductMarketing o1, ProductMarketing o2) {
-                        if (o1 != null && o2 != null) {
-                            Integer order1 = o1.getOrder(marketAreaId);
-                            Integer order2 = o2.getOrder(marketAreaId);
-                            if (order1 != null && order2 != null) {
-                                return order1.compareTo(order2);
-                            } else {
-                                return o1.getId().compareTo(o2.getId());
-                            }
-                        }
-                        return 0;
-                    }
-                });
-            }
-            return sortedObjects;
-        }
-        return null;
-    }
-    
     // PRODUCT MARKETING COMMENT/RATE
     
-    public void saveOrUpdateProductMarketingCustomerRate(final ProductMarketingCustomerRate productMarketingCustomerRate) {
-        productDao.saveOrUpdateProductMarketingCustomerRate(productMarketingCustomerRate);
+    public ProductMarketingCustomerRate saveOrUpdateProductMarketingCustomerRate(final ProductMarketingCustomerRate productMarketingCustomerRate) {
+        return productDao.saveOrUpdateProductMarketingCustomerRate(productMarketingCustomerRate);
     }
 
     public void deleteProductMarketingCustomerRate(final ProductMarketingCustomerRate productMarketingCustomerRate) {
         productDao.deleteProductMarketingCustomerRate(productMarketingCustomerRate);
     }
     
-    public void saveOrUpdateProductMarketingCustomerComment(final ProductMarketingCustomerComment productMarketingCustomerRate) {
-        productDao.saveOrUpdateProductMarketingCustomerComment(productMarketingCustomerRate);
+    public ProductMarketingCustomerComment saveOrUpdateProductMarketingCustomerComment(final ProductMarketingCustomerComment productMarketingCustomerRate) {
+        return productDao.saveOrUpdateProductMarketingCustomerComment(productMarketingCustomerRate);
     }
 
     public void deleteProductMarketingCustomerComment(final ProductMarketingCustomerComment productMarketingCustomerRate) {
@@ -181,8 +197,8 @@ public class ProductServiceImpl implements ProductService {
     }
     
     //TODO: Denis: should cache?
-    public CustomerProductRatesViewBean calculateProductMarketingCustomerRatesByProductCode(final Long productMarketingId) {
-    	Float avgRate = productDao.calculateProductMarketingCustomerRatesByProductCode(productMarketingId);
+    public CustomerProductRatesViewBean calculateProductMarketingCustomerRatesByProductId(final Long productMarketingId) {
+    	Float avgRate = productDao.calculateProductMarketingCustomerRatesByProductId(productMarketingId);
     	CustomerProductRatesViewBean customerProductRatesViewBean = new CustomerProductRatesViewBean();
     	customerProductRatesViewBean.setAvgRate(avgRate);
     	return customerProductRatesViewBean;
@@ -204,12 +220,8 @@ public class ProductServiceImpl implements ProductService {
         return getProductMarketingAssetById(assetId, params);
     }
 
-    public Asset getProductMarketingAssetByCode(final String assetCode, Object... params) {
-        return productDao.getProductMarketingAssetByCode(assetCode, params);
-    }
-
-    public void saveOrUpdateProductMarketingAsset(final Asset productMarketingAsset) {
-        productDao.saveOrUpdateProductMarketingAsset(productMarketingAsset);
+    public Asset saveOrUpdateProductMarketingAsset(final Asset productMarketingAsset) {
+        return productDao.saveOrUpdateProductMarketingAsset(productMarketingAsset);
     }
 
     public void deleteProductMarketingAsset(final Asset productMarketingAsset) {
@@ -236,47 +248,51 @@ public class ProductServiceImpl implements ProductService {
         return productDao.getProductSkuByCode(skuCode, params);
     }
 
-    public List<ProductSku> findProductSkusByproductMarketingId(final Long marketAreaId, final Long productMarketing, Object... params) {
+    public List<ProductSku> findProductSkusByProductMarketingId(final Long productMarketing, Object... params) {
         List<ProductSku> skus = productDao.findProductSkusByproductMarketingId(productMarketing, params);
-        return orderProductSkuList(marketAreaId, skus);
+        return skus;
     }
 
-    public List<ProductSku> findProductSkus(final Long marketAreaId, final String text, Object... params) {
+    public List<ProductSku> findProductSkus(final String text, Object... params) {
         List<ProductSku> skus = productDao.findProductSkus(text, params);
-        return orderProductSkuList(marketAreaId, skus);
+        return skus;
     }
 
-    public void saveOrUpdateProductSku(final ProductSku productSku) {
-        productDao.saveOrUpdateProductSku(productSku);
+    public List<ProductSku> findProductSkusByMasterCatalogCategoryId(Long categoryId, Object... params) {
+        List<ProductSku> skus = productDao.findProductSkusByMasterCatalogCategoryId(categoryId, params);
+        return skus;
+    }
+    
+    public List<ProductSku> findProductSkusNotInThisMasterCatalogCategoryId(Long categoryId, Object... params) {
+        List<ProductSku> skus = productDao.findProductSkusNotInThisMasterCatalogCategoryId(categoryId, params);
+        return skus;
+    }
+    
+    public List<ProductSku> findProductSkusByVirtualCatalogCategoryId(Long categoryId, Object... params) {
+        List<ProductSku> skus = productDao.findProductSkusByVirtualCatalogCategoryId(categoryId, params);
+        return skus;
+    }
+    
+    public List<ProductSku> findProductSkusNotInThisVirtualCatalogCategoryId(Long categoryId, Object... params) {
+        List<ProductSku> skus = productDao.findProductSkusNotInThisVirtualCatalogCategoryId(categoryId, params);
+        return skus;
+    }
+
+    public List<Long> getProductIds(List<ProductSku> productSkus) {
+        List<Long> productSkuIds = new ArrayList<Long>();
+        for (Iterator<ProductSku> iterator = productSkus.iterator(); iterator.hasNext();) {
+            ProductSku productSku = (ProductSku) iterator.next();
+            productSkuIds.add(productSku.getId());
+        }
+        return productSkuIds;
+    }
+
+    public ProductSku saveOrUpdateProductSku(final ProductSku productSku) {
+        return productDao.saveOrUpdateProductSku(productSku);
     }
 
     public void deleteProductSku(final ProductSku productSku) {
         productDao.deleteProductSku(productSku);
-    }
-
-    protected List<ProductSku> orderProductSkuList(final Long marketAreaId, final List<ProductSku> skus) {
-        if (skus != null) {
-            List<ProductSku> sortedObjects = new LinkedList<ProductSku>(skus);
-            if (marketAreaId != null) {
-                Collections.sort(sortedObjects, new Comparator<ProductSku>() {
-                    @Override
-                    public int compare(ProductSku o1, ProductSku o2) {
-                        if (o1 != null && o2 != null) {
-                            Integer order1 = o1.getOrder(marketAreaId);
-                            Integer order2 = o2.getOrder(marketAreaId);
-                            if (order1 != null && order2 != null) {
-                                return order1.compareTo(order2);
-                            } else {
-                                return o1.getId().compareTo(o2.getId());
-                            }
-                        }
-                        return 0;
-                    }
-                });
-            }
-            return sortedObjects;
-        }
-        return null;
     }
 
     // PRODUCT SKU ASSET
@@ -295,12 +311,8 @@ public class ProductServiceImpl implements ProductService {
         return getProductSkuAssetById(assetId);
     }
 
-    public Asset getProductSkuAssetByCode(final String assetCode, Object... params) {
-        return productDao.getProductSkuAssetByCode(assetCode, params);
-    }
-
-    public void saveOrUpdateProductSkuAsset(final Asset productSkuAsset) {
-        productDao.saveOrUpdateProductSkuAsset(productSkuAsset);
+    public Asset saveOrUpdateProductSkuAsset(final Asset productSkuAsset) {
+        return productDao.saveOrUpdateProductSkuAsset(productSkuAsset);
     }
 
     public void deleteProductSkuAsset(final Asset productSkuAsset) {
@@ -331,8 +343,8 @@ public class ProductServiceImpl implements ProductService {
         return productDao.findProductBrandsByCatalogCategoryCode(categoryCode, params);
     }
 
-    public void saveOrUpdateProductBrand(final ProductBrand productBrand) {
-        productDao.saveOrUpdateProductBrand(productBrand);
+    public ProductBrand saveOrUpdateProductBrand(final ProductBrand productBrand) {
+        return productDao.saveOrUpdateProductBrand(productBrand);
     }
 
     public void deleteProductBrand(final ProductBrand productBrand) {

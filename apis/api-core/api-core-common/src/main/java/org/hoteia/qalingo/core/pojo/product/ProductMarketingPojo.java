@@ -1,3 +1,12 @@
+/**
+ * Most of the code in the Qalingo project is copyrighted Hoteia and licensed
+ * under the Apache License Version 2.0 (release version 0.8.0)
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *                   Copyright (c) Hoteia, 2012-2014
+ * http://www.hoteia.com - http://twitter.com/hoteia - contact@hoteia.com
+ *
+ */
 package org.hoteia.qalingo.core.pojo.product;
 
 import java.util.ArrayList;
@@ -12,10 +21,12 @@ public class ProductMarketingPojo {
 
     private Long id;
     private int version;
+    private String code;
     private String name;
     private String description;
     private boolean isDefault;
-    private String code;
+    private int ranking;
+
     private Date dateCreate;
     private Date dateUpdate;
 
@@ -28,6 +39,8 @@ public class ProductMarketingPojo {
     private List<ProductAssociationLinkPojo> productAssociationLinks = new ArrayList<ProductAssociationLinkPojo>();
     private List<AssetPojo> assetsIsGlobal = new ArrayList<AssetPojo>();
     private List<AssetPojo> assetsByMarketArea = new ArrayList<AssetPojo>();
+
+    private String detailsUrl;
 
     public Long getId() {
         return id;
@@ -45,6 +58,14 @@ public class ProductMarketingPojo {
         this.version = version;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
     public String getName() {
         return name;
     }
@@ -69,14 +90,14 @@ public class ProductMarketingPojo {
         isDefault = aDefault;
     }
 
-    public String getCode() {
-        return code;
+    public int getRanking() {
+        return ranking;
     }
-
-    public void setCode(String code) {
-        this.code = code;
+    
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
     }
-
+    
     public Date getDateCreate() {
         return dateCreate;
     }
@@ -157,6 +178,14 @@ public class ProductMarketingPojo {
 
     public void setAssetsByMarketArea(List<AssetPojo> assetsByMarketArea) {
         this.assetsByMarketArea = assetsByMarketArea;
+    }
+    
+    public String getDetailsUrl() {
+        return detailsUrl;
+    }
+    
+    public void setDetailsUrl(String detailsUrl) {
+        this.detailsUrl = detailsUrl;
     }
     
 }
